@@ -1,0 +1,7 @@
+apiVersion: valorl.dev/v1
+kind: Example
+metadata:
+  name: example-cr-1
+spec:
+  exampleTitle: "Title of example-cr-1"
+  exampleText: "Text of example-cr-1"

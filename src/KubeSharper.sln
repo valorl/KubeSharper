@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29905.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KubeSharper", "KubeSharper\KubeSharper.csproj", "{065B072F-13F8-4008-A664-E7E4A1B153B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KubeSharper", "KubeSharper\KubeSharper.csproj", "{065B072F-13F8-4008-A664-E7E4A1B153B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KubeSharper.Services", "KubeSharper.Services\KubeSharper.Services.csproj", "{65DF40CF-670F-46DF-AEAA-B0B6115728E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{065B072F-13F8-4008-A664-E7E4A1B153B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{065B072F-13F8-4008-A664-E7E4A1B153B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{065B072F-13F8-4008-A664-E7E4A1B153B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65DF40CF-670F-46DF-AEAA-B0B6115728E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65DF40CF-670F-46DF-AEAA-B0B6115728E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65DF40CF-670F-46DF-AEAA-B0B6115728E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65DF40CF-670F-46DF-AEAA-B0B6115728E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
