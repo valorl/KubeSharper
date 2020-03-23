@@ -1,5 +1,8 @@
 ﻿using k8s;
 using k8s.Models;
+using KubeSharper.EventQueue;
+using KubeSharper.EventSources;
+using KubeSharper.Reconcilliation;
 using Microsoft.Rest;
 using System;
 using System.Collections.Generic;
@@ -26,21 +29,6 @@ namespace KubeSharper.Services
 
         }
 
-        class NativeListParams
-        {
-            public bool? AllowWatchBookmarks { get; set; } = null;
-            public string ContinueParameter { get; set; } = null;
-            public string FieldSelector { get; set; } = null;
-            public string LabelSelector { get; set; } = null;
-            public int? Limit { get; set; } = null;
-            public string ResourceVersion { get; set; } = null;
-            public int? TimeoutSeconds { get; set; } = null;
-            public bool? Watch { get; set; } = null;
-            public string Pretty { get; set; } = null;
-            public Dictionary<string, List<string>> customHeaders { get; set; } = null;
-            public CancellationToken cancellationToken { get; set; } = default;
-        }
-
         public Controller(Kubernetes client,
             IReconciler reconciler,
             IEventQueueFactory<ReconcileRequest> queueFactory)
@@ -58,14 +46,15 @@ namespace KubeSharper.Services
 
         //}
 
+        public void AddWatch<TObject>(string @namespace)
+        {
+            var sourceMethods = typeof(EventSources.EventSources).GetMethods();
+            sourceMethods.First(mi => mi.Name == typeof(TObject).Name);
+        }
+
         public void RegisterWatch<TObject>(string @namespace)
         { 
             var objectType = typeof(TObject);
-            //if(objectType.Assembly != typeof(V1Pod).Assembly)
-            //{
-            //    var l = _client.ListNamespacedCustomObjectWithHttpMessagesAsync()
-                
-            //}
 
             var operations = typeof(Kubernetes).GetMethods()
                 .Where(mi => mi.Name.StartsWith("ListNamespaced") && mi.Name.EndsWith("WithHttpMessagesAsync"));
@@ -75,7 +64,6 @@ namespace KubeSharper.Services
             var op = operations.Where(mi => mi.ReturnType == returnType).First();
 
             var lst = _client.ListNamespacedPodWithHttpMessagesAsync("test").Result;
-            lst.Watch()
             
 
             var invokeParams = op.GetParameters()

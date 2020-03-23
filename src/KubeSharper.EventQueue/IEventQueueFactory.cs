@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace KubeSharper.Services
+namespace KubeSharper.EventQueue
 {
     public interface IEventQueueFactory<T>
     {

@@ -1,6 +1,10 @@
 ﻿using k8s;
 using k8s.Models;
+using KubeSharper.EventQueue;
+using KubeSharper.EventSources;
+using KubeSharper.Reconcilliation;
 using KubeSharper.Services;
+using Serilog;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,38 +16,53 @@ namespace KubeSharper
     {
         static async Task Main(string[] args)
         {
-            //var wq = new WorkQueue<string>();
-            //wq.Start(item => Console.WriteLine(item));
-            //wq.Enqueue("test1");
-            //wq.Enqueue("test2");
-            //Console.ReadLine();
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console()
+                .CreateLogger();
+
+            var cts = new CancellationTokenSource();
             var configFile = @"C:\Users\vao\kubeconfig.yaml";
             var config = KubernetesClientConfiguration.BuildConfigFromConfigFile(configFile);
             var client = new Kubernetes(config);
-            //client.ListNamespacedPodWithHttpMessagesAsync();
-            var res = await client.ListNamespacedCustomObjectWithHttpMessagesAsync("valorl.dev", "v1", "default", "examples", watch: true).ConfigureAwait(false);
-            using var watch = res.Watch((WatchEventType t, Example o) =>
-            //var res = await client.ListNamespacedCustomObjectWithHttpMessagesAsync("networking.k8s.io", "v1", "default", "networkpolicies", watch: true).ConfigureAwait(false);
-            //using var watch = res.Watch((WatchEventType t, V1NetworkPolicy o) =>
-            //{
-            //    var yaml = new YamlDotNet.Serialization.SerializerBuilder()
-            //    .WithNamingConvention(CamelCaseNamingConvention.Instance)
-            //    .Build()
-            //    .Serialize(o);
-            //    Console.WriteLine("=====================================");
-            //    Console.WriteLine($"EVENT: {t}");
-            //    Console.WriteLine($"OBJECT:");
-            //    Console.WriteLine(yaml);
-            //    Console.WriteLine("=====================================");
-            //});
 
-            //Console.WriteLine("Press Ctrl+C to stop watching");
-            //var ctrlc = new ManualResetEventSlim(false);
-            //Console.CancelKeyPress += (sender, eargs) => ctrlc.Set();
-            //ctrlc.Wait();
+            var q = new EventQueue<ReconcileRequest>();
+            var first = await q.TryAdd(new ReconcileRequest
+            {
+                ApiVersion = "v1",
+                Kind = "Secret",
+                Namespace = "default",
+                Name = "dev-db-secret"
+            });
+            var second = await q.TryAdd(new ReconcileRequest
+            {
+                ApiVersion = "v1",
+                Kind = "Secret",
+                Namespace = "default",
+                Name = "dev-db-secret"
+            });
+            Console.WriteLine($"first {first}, second {second}");
+            _ = Task.Run(async () =>
+              {
+                  while (true)
+                  {
+                      if (q.TryGet(out var r))
+                      {
+                          Log.Information($"Got {r}");
+                      }
+                      await Task.Delay(100, cts.Token);
+                  }
+              }, cts.Token).ConfigureAwait(false);
+
+            var sources = new EventSources.EventSources();
+            var source = sources.GetNamespacedFor<V1Secret>(client, "default");
+            await source.Start(q).ConfigureAwait(false);
+            await Task.Delay(100);
 
 
-            Console.ReadLine();
+            Console.WriteLine("Press Ctrl+C to stop watching");
+            var ctrlc = new ManualResetEventSlim(false);
+            Console.CancelKeyPress += (sender, eargs) => { ctrlc.Set(); cts.Cancel(); };
+            ctrlc.Wait();
         }
     }
 }
