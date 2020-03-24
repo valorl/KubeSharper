@@ -8,9 +8,4 @@
     <PackageReference Include="KubernetesClient" Version="1.6.27" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\KubeSharper.EventSources\KubeSharper.EventSources.csproj" />
-    <ProjectReference Include="..\KubeSharper.Kubernetes\KubeSharper.Kubernetes.csproj" />
-  </ItemGroup>
-
 </Project>

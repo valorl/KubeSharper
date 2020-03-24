@@ -1,11 +1,12 @@
 ﻿using k8s;
 using k8s.Models;
+using KubeSharper.Kubernetes;
 using System;
 using System.Threading.Tasks;
 
 namespace KubeSharper.EventSources
 {
-    public class EventSources /*: IEventSources*/
+    public class EventSources
     {
 
         public EventSource<T> GetNamespacedFor<T>(IKubernetes operations, string @namespace)
@@ -19,10 +20,19 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1Pod> V1Pod(IKubernetes operations, string @namespace)
         {
-            async Task<Watcher<V1Pod>> WatchMaker(Action<WatchEventType, V1Pod> onEvent)
+            async Task<Watcher<V1Pod>> WatchMaker(Func<WatchEventType, KubernetesV1MetaObject, Task> onEvent)
             {
                 var list = await operations.ListNamespacedPodWithHttpMessagesAsync(@namespace);
-                var watch = list.Watch((WatchEventType et, V1Pod pod) => { onEvent(et, pod); });
+                var watch = list.Watch(async (WatchEventType et, V1Pod obj) =>
+                {
+                    var metaObj = new KubernetesV1MetaObject
+                    {
+                        ApiVersion = obj.ApiVersion,
+                        Kind = obj.Kind,
+                        Metadata = obj.Metadata
+                    };
+                    await onEvent(et, metaObj); 
+                });
                 return watch;
             }
 
@@ -31,10 +41,18 @@ namespace KubeSharper.EventSources
         }
         private EventSource<V1Secret> V1Secret(IKubernetes operations, string @namespace)
         {
-            async Task<Watcher<V1Secret>> WatchMaker(Action<WatchEventType, V1Secret> onEvent)
+            async Task<Watcher<V1Secret>> WatchMaker(Func<WatchEventType, KubernetesV1MetaObject, Task> onEvent)
             {
                 var list = await operations.ListNamespacedSecretWithHttpMessagesAsync(@namespace, watch: true);
-                var watch = list.Watch((WatchEventType et, V1Secret pod) => { onEvent(et, pod); });
+                var watch = list.Watch(async (WatchEventType et, V1Secret obj) => {
+                    var metaObj = new KubernetesV1MetaObject
+                    {
+                        ApiVersion = obj.ApiVersion,
+                        Kind = obj.Kind,
+                        Metadata = obj.Metadata
+                    };
+                    await onEvent(et, metaObj);
+                });
                 return watch;
             }
 

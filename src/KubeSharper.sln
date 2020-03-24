@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KubeSharper.EventQueue", "K
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KubeSharper.Reconcilliation", "KubeSharper.Reconcilliation\KubeSharper.Reconcilliation.csproj", "{5C9A12DC-B569-4FD3-86AA-A2818475F713}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KubeSharper.Kubernetes", "KubeSharper.Kubernetes\KubeSharper.Kubernetes.csproj", "{5D67A265-9D77-402A-B481-39CD41E97A0B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{5C9A12DC-B569-4FD3-86AA-A2818475F713}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C9A12DC-B569-4FD3-86AA-A2818475F713}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C9A12DC-B569-4FD3-86AA-A2818475F713}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D67A265-9D77-402A-B481-39CD41E97A0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D67A265-9D77-402A-B481-39CD41E97A0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D67A265-9D77-402A-B481-39CD41E97A0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D67A265-9D77-402A-B481-39CD41E97A0B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
