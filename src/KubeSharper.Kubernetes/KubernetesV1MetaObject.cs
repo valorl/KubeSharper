@@ -2,7 +2,7 @@
 using k8s.Models;
 using System;
 
-namespace KubeSharper.Kubernetes
+namespace KubeSharper.Utils
 {
     public class KubernetesV1MetaObject : KubernetesObject
     {

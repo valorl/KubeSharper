@@ -55,7 +55,7 @@ namespace KubeSharper
 
             var sources = new EventSources.EventSources();
             var source = sources.GetNamespacedFor<V1Secret>(client, "default");
-            await source.Start(q).ConfigureAwait(false);
+            await source.Start(Handlers.ObjectEnqueuer(q)).ConfigureAwait(false);
             await Task.Delay(100);
 
 

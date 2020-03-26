@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KubeSharper.EventSources\KubeSharper.EventSources.csproj" />
-    <ProjectReference Include="..\KubeSharper.Kubernetes\KubeSharper.Kubernetes.csproj" />
+    <ProjectReference Include="..\KubeSharper.Kubernetes\KubeSharper.Utils.csproj" />
   </ItemGroup>
 
 </Project>

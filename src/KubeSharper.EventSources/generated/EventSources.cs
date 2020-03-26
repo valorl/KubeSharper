@@ -1,6 +1,6 @@
 ﻿using k8s;
 using k8s.Models;
-using KubeSharper.Kubernetes;
+using KubeSharper.Utils;
 using System;
 using System.Threading.Tasks;
 

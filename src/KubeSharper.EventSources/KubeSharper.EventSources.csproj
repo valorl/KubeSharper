@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\KubeSharper.EventQueue\KubeSharper.EventQueue.csproj" />
-    <ProjectReference Include="..\KubeSharper.Kubernetes\KubeSharper.Kubernetes.csproj" />
+    <ProjectReference Include="..\KubeSharper.Kubernetes\KubeSharper.Utils.csproj" />
   </ItemGroup>
 
 </Project>

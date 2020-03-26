@@ -6,6 +6,6 @@ namespace KubeSharper.EventQueue
 {
     public interface IEventQueueFactory<T>
     {
-        EventQueue<T> NewEventQueue();
+        IEventQueue<T> NewEventQueue();
     }
 }

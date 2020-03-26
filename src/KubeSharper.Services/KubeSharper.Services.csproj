@@ -12,6 +12,7 @@
   <ItemGroup>
     <ProjectReference Include="..\KubeSharper.EventQueue\KubeSharper.EventQueue.csproj" />
     <ProjectReference Include="..\KubeSharper.EventSources\KubeSharper.EventSources.csproj" />
+    <ProjectReference Include="..\KubeSharper.Reconcilliation\KubeSharper.Reconcilliation.csproj" />
   </ItemGroup>
 
 </Project>

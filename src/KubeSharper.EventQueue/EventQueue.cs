@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace KubeSharper.EventQueue
 {
-    public class EventQueue<T>
+    public class EventQueue<T> : IEventQueue<T> 
     {
         private readonly ConcurrentQueue<T> _items = new ConcurrentQueue<T>();
         private readonly ConcurrentDictionary<T, bool> _set = new ConcurrentDictionary<T, bool>();
