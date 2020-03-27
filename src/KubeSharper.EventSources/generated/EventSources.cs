@@ -1,5 +1,7 @@
 ﻿using k8s;
 using k8s.Models;
+using KubeSharper.EventQueue;
+using KubeSharper.Reconcilliation;
 using KubeSharper.Utils;
 using System;
 using System.Threading.Tasks;
@@ -20,9 +22,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1Pod> V1Pod(IKubernetes operations, string @namespace)
         {
-            async Task<Watcher<V1Pod>> WatchMaker(Func<WatchEventType, KubernetesV1MetaObject, Task> onEvent)
+            async Task<Watcher<V1Pod>> WatchMaker(EventSourceHandler onEvent, IEventQueue<ReconcileRequest> queue)
             {
-                var list = await operations.ListNamespacedPodWithHttpMessagesAsync(@namespace);
+                var list = await operations.ListNamespacedPodWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1Pod obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -31,7 +33,7 @@ namespace KubeSharper.EventSources
                         Kind = obj.Kind,
                         Metadata = obj.Metadata
                     };
-                    await onEvent(et, metaObj); 
+                    await onEvent(et, metaObj, queue); 
                 });
                 return watch;
             }
@@ -41,7 +43,7 @@ namespace KubeSharper.EventSources
         }
         private EventSource<V1Secret> V1Secret(IKubernetes operations, string @namespace)
         {
-            async Task<Watcher<V1Secret>> WatchMaker(Func<WatchEventType, KubernetesV1MetaObject, Task> onEvent)
+            async Task<Watcher<V1Secret>> WatchMaker(EventSourceHandler onEvent, IEventQueue<ReconcileRequest> queue)
             {
                 var list = await operations.ListNamespacedSecretWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1Secret obj) => {
@@ -51,7 +53,7 @@ namespace KubeSharper.EventSources
                         Kind = obj.Kind,
                         Metadata = obj.Metadata
                     };
-                    await onEvent(et, metaObj);
+                    await onEvent(et, metaObj, queue);
                 });
                 return watch;
             }

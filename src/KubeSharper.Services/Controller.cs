@@ -16,13 +16,6 @@ namespace KubeSharper.Services
 {
     public class Controller
     {
-        private readonly IKubernetes _client;
-        private readonly IReconciler _reconciler;
-        private readonly IEventQueue<ReconcileRequest> _queue;
-        private readonly IEventSources _eventSources;
-
-        private readonly List<WatchInfo> _watches;
-
         class WatchInfo
         {
             public IEventSource Source { get; }
@@ -35,6 +28,13 @@ namespace KubeSharper.Services
                 Handler = handler;
             }
         }
+
+        private readonly IKubernetes _client;
+        private readonly IReconciler _reconciler;
+        private readonly IEventQueue<ReconcileRequest> _queue;
+        private readonly IEventSources _eventSources;
+
+        private readonly List<WatchInfo> _watches;
 
         public Controller(IKubernetes client,
             IReconciler reconciler,
@@ -53,15 +53,13 @@ namespace KubeSharper.Services
             _watches.Add(new WatchInfo(source, @namespace, handler));
         }
 
-
-
-
-
-
-
-        
-
-
+        public async Task Start()
+        {
+            foreach (var w in _watches)
+            {
+                await w.Source.Start(w.Handler, _queue);
+            }
+        }
     }
 
 }
