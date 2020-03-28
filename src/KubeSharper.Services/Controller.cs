@@ -29,6 +29,19 @@ namespace KubeSharper.Services
                 Handler = handler;
             }
         }
+        class ReconcileWrapper : IReconciler
+        {
+            private readonly ReconcileFunc _reconciler;
+            public ReconcileWrapper(ReconcileFunc reconciler)
+            {
+                _reconciler = reconciler;
+            }
+
+            public async Task<ReconcileResult> Reconcile(ReconcileRequest request)
+            {
+                return await _reconciler(request);
+            }
+        }
 
         private readonly IKubernetes _client;
         private readonly IReconciler _reconciler;
@@ -42,10 +55,23 @@ namespace KubeSharper.Services
         public Controller(IKubernetes client,
             IReconciler reconciler,
             IEventQueueFactory<ReconcileRequest> queueFactory,
+            IEventSources eventSources) : this(client, queueFactory, eventSources)
+        {
+            _reconciler = reconciler;
+        }
+        public Controller(IKubernetes client,
+            ReconcileFunc reconciler,
+            IEventQueueFactory<ReconcileRequest> queueFactory,
+            IEventSources eventSources) : this(client, queueFactory, eventSources)
+        {
+            _reconciler = new ReconcileWrapper(reconciler);
+        }
+
+        private Controller(IKubernetes client,
+            IEventQueueFactory<ReconcileRequest> queueFactory,
             IEventSources eventSources)
         {
             _client = client;
-            _reconciler = reconciler;
             _eventSources = eventSources;
             _queue = queueFactory.NewEventQueue();
         }
