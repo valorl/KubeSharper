@@ -14,18 +14,18 @@ namespace KubeSharper.Reconcilliation
 {
     public static class Handlers
     {
-        public static EventSourceHandler ObjectEnqueuer(IEventQueue<ReconcileRequest> queue)
+        public static EventSourceHandler ObjectEnqueuer()
         {
-            return LogException(async (et, obj) =>
+            return LogException(async (et, obj, q) =>
             {
                 var r = MakeRequest(obj);
-                await EnqueueRequest(queue, r);
+                await EnqueueRequest(q, r);
             });
         }
 
-        public static EventSourceHandler OwnerEnqueuer(IEventQueue<ReconcileRequest> queue, OwnerInfo info)
+        public static EventSourceHandler OwnerEnqueuer(OwnerInfo info)
         {
-            return LogException(async (et, obj) =>
+            return LogException(async (et, obj, q) =>
             {
                 var requests = info.IsController switch
                 {
@@ -40,7 +40,7 @@ namespace KubeSharper.Reconcilliation
                 };
                 foreach (var r in requests)
                 {
-                    await EnqueueRequest(queue, r);
+                    await EnqueueRequest(q, r);
                 }
             });
         }
@@ -80,11 +80,11 @@ namespace KubeSharper.Reconcilliation
 
         private static EventSourceHandler LogException(EventSourceHandler h)
         {
-            return async (et, obj) =>
+            return async (et, obj, q) =>
             {
                 try
                 {
-                    await h(et, obj);
+                    await h(et, obj, q);
                 }
                 catch(Exception ex)
                 {
