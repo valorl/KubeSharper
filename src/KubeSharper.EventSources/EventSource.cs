@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace KubeSharper.EventSources
 {
-    public interface IEventSource
+    public interface IEventSource : IDisposable
     {
         Task Start(EventSourceHandler handler, IEventQueue<ReconcileRequest> queue);
     }
@@ -19,7 +19,7 @@ namespace KubeSharper.EventSources
     public delegate Task EventSourceHandler(WatchEventType et, KubernetesV1MetaObject obj, IEventQueue<ReconcileRequest> queue);
 
 
-    public class EventSource<T> : IEventSource
+    public sealed class EventSource<T> : IEventSource
     {
         internal delegate Task<Watcher<T>> WatchMaker(EventSourceHandler h, IEventQueue<ReconcileRequest> q);
         private readonly WatchMaker _watchMaker;
@@ -34,6 +34,11 @@ namespace KubeSharper.EventSources
         public async Task Start(EventSourceHandler handler, IEventQueue<ReconcileRequest> queue)
         {
             _watcher = await _watchMaker(handler.Invoke, queue).ConfigureAwait(false);
+        }
+
+        public void Dispose()
+        {
+            _watcher.Dispose();
         }
     }
 

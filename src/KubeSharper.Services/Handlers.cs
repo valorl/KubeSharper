@@ -68,7 +68,7 @@ namespace KubeSharper.Reconcilliation
 
         private static async Task EnqueueRequest(IEventQueue<ReconcileRequest> queue, ReconcileRequest req)
         {
-            if (!(await queue.TryAdd(req)))
+            if (!await queue.TryAdd(req))
             {
                 Log.Error($"Failed adding {req.ApiVersion}/{req.Namespace}/{req.Kind}/{req.Name}");
             }

@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace KubeSharper.Services
 {
-    public class Controller : IDisposable
+    public sealed class Controller : IDisposable
     {
         class WatchInfo
         {
@@ -48,21 +48,21 @@ namespace KubeSharper.Services
         private readonly IEventQueue<ReconcileRequest> _queue;
         private readonly IEventSources _eventSources;
 
-        private readonly List<WatchInfo> _watches;
+        private readonly List<WatchInfo> _watches = new List<WatchInfo>();
         private Task _reconcileLoop;
         private CancellationTokenSource _cts;
 
         public Controller(IKubernetes client,
-            IReconciler reconciler,
             IEventQueueFactory<ReconcileRequest> queueFactory,
-            IEventSources eventSources) : this(client, queueFactory, eventSources)
+            IEventSources eventSources,
+            IReconciler reconciler) : this(client, queueFactory, eventSources)
         {
             _reconciler = reconciler;
         }
         public Controller(IKubernetes client,
-            ReconcileFunc reconciler,
             IEventQueueFactory<ReconcileRequest> queueFactory,
-            IEventSources eventSources) : this(client, queueFactory, eventSources)
+            IEventSources eventSources,
+            ReconcileFunc reconciler) : this(client, queueFactory, eventSources)
         {
             _reconciler = new ReconcileWrapper(reconciler);
         }
@@ -103,10 +103,9 @@ namespace KubeSharper.Services
         {
             foreach(var w in _watches)
             {
-                //TODO Stop watch ?
+                w.Source.Dispose();
             }
-
-            //TODO stop reconcile loop
+            _cts.Cancel();
         }
 
         private async Task ReconcileLoop(CancellationToken ct)

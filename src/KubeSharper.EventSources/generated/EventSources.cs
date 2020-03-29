@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace KubeSharper.EventSources
 {
-    public class EventSources
+    public class EventSources : IEventSources
     {
 
         public EventSource<T> GetNamespacedFor<T>(IKubernetes operations, string @namespace)
