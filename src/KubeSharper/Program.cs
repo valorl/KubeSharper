@@ -17,7 +17,9 @@ namespace KubeSharper
         static async Task Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console()
+                .MinimumLevel.Verbose()
+                .Enrich.WithThreadId()
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss.fff} {Level:u3}] [{ThreadId}] {Message:lj}{NewLine}{Exception}")
                 .CreateLogger();
 
             var cts = new CancellationTokenSource();

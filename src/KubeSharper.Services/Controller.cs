@@ -93,6 +93,7 @@ namespace KubeSharper.Services
 
             foreach (var w in _watches)
             {
+                Log.Debug($"Starting source for {w.Source.ObjectType}");
                 await w.Source.Start(w.Handler, _queue);
             }
 
@@ -110,11 +111,14 @@ namespace KubeSharper.Services
 
         private async Task ReconcileLoop(CancellationToken ct)
         {
+            Log.Debug("Entering reconcile loop");
             while(!ct.IsCancellationRequested)
             {
-                _queue.TryGet(out var req);
-                var result = await _reconciler.Reconcile(req);
 
+                _queue.TryGet(out var req);
+                if (req == null) continue;
+
+                var result = await _reconciler.Reconcile(req);
                 if(result.Requeue)
                 {
                     _ = Requeue(req, result.RequeueAfter, ct);

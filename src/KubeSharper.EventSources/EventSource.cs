@@ -13,6 +13,7 @@ namespace KubeSharper.EventSources
 {
     public interface IEventSource : IDisposable
     {
+        string ObjectType { get; }
         Task Start(EventSourceHandler handler, IEventQueue<ReconcileRequest> queue);
     }
 
@@ -26,13 +27,17 @@ namespace KubeSharper.EventSources
 
         private Watcher<T> _watcher;
 
+        public string ObjectType { get; }
+
         internal EventSource(WatchMaker watchMaker)
         {
             _watchMaker = watchMaker;
+            ObjectType = typeof(T).Name;
         }
 
         public async Task Start(EventSourceHandler handler, IEventQueue<ReconcileRequest> queue)
         {
+            Log.Debug($"Event source {ObjectType} starting");
             _watcher = await _watchMaker(handler.Invoke, queue).ConfigureAwait(false);
         }
 
