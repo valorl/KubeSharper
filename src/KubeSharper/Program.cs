@@ -33,7 +33,7 @@ namespace KubeSharper
                 return Task.FromResult(new ReconcileResult());
             });
 
-            controller.RegisterWatch<V1Secret>("default", Handlers.ObjectEnqueuer());
+            controller.AddWatch<Example>("default", Handlers.ObjectEnqueuer());
             await controller.Start();
 
 

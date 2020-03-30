@@ -34,6 +34,11 @@ namespace KubeSharper.EventSources
             _watchMaker = watchMaker;
             ObjectType = typeof(T).Name;
         }
+        internal EventSource(WatchMaker watchMaker, string objectType)
+        {
+            _watchMaker = watchMaker;
+            ObjectType = objectType;
+        }
 
         public async Task Start(EventSourceHandler handler, IEventQueue<ReconcileRequest> queue)
         {

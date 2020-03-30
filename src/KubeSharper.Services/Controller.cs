@@ -3,6 +3,7 @@ using k8s.Models;
 using KubeSharper.EventQueue;
 using KubeSharper.EventSources;
 using KubeSharper.Reconcilliation;
+using KubeSharper.Utils;
 using Microsoft.Rest;
 using Serilog;
 using System;
@@ -76,9 +77,18 @@ namespace KubeSharper.Services
             _queue = queueFactory.NewEventQueue();
         }
 
-        public void RegisterWatch<TObject>(string @namespace, EventSourceHandler handler)
+
+        public void AddWatch<TObject>(string @namespace, EventSourceHandler handler)
         {
-            var source = _eventSources.GetNamespacedFor<TObject>(_client, @namespace);
+            IEventSource source;
+            if(typeof(TObject).IsSubclassOf(typeof(CustomResource)))
+            {
+                source = _eventSources.GetNamespacedForCustom<TObject>(_client, @namespace);
+            }
+            else
+            {
+                source = _eventSources.GetNamespacedFor<TObject>(_client, @namespace);
+            }
             _watches.Add(new WatchInfo(source, @namespace, handler));
         }
 

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace KubeSharper.EventSources
 {
-    public class EventSources : IEventSources
+    public partial class EventSources : IEventSources
     {
 
         public EventSource<T> GetNamespacedFor<T>(IKubernetes operations, string @namespace)
@@ -34,7 +34,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et, metaObj, queue); 
-                });
+                }, OnError<V1Pod>, OnClose<V1Pod>);
                 return watch;
             }
 
@@ -54,7 +54,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et, metaObj, queue);
-                });
+                }, OnError<V1Secret>, OnClose<V1Secret>);
                 return watch;
             }
 

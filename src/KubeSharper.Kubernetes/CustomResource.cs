@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace KubeSharper.Services
+namespace KubeSharper.Utils
 {
-    public abstract class CustomResource : KubernetesObject
+    public class CustomResource : KubernetesObject
     {
         public V1ObjectMeta Metadata { get; set; }
     }

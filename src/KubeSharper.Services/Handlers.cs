@@ -70,11 +70,11 @@ namespace KubeSharper.Reconcilliation
         {
             if (!await queue.TryAdd(req))
             {
-                Log.Error($"Failed adding {req.ApiVersion}/{req.Namespace}/{req.Kind}/{req.Name}");
+                Log.Error($"Failed adding request for {req}");
             }
             else
             {
-                Log.Information($"Added {req}");
+                Log.Information($"Added request for {req}");
             }
         }
 
