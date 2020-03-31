@@ -1,8 +1,4 @@
-
-
-
-
-using k8s;
+﻿using k8s;
 using k8s.Models;
 using KubeSharper.EventQueue;
 using KubeSharper.Reconcilliation;

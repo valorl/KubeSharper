@@ -1,10 +1,7 @@
-﻿{{
+﻿{{~
     head = resources | array.first
     tail = resources | array.offset 1
-}}
-
-
-
+~}}
 using k8s;
 using k8s.Models;
 using KubeSharper.EventQueue;
@@ -34,7 +31,7 @@ namespace KubeSharper.EventSources
         {
             async Task<Watcher<{{ r.type }}>> WatchMaker(EventSourceHandler onEvent, IEventQueue<ReconcileRequest> queue)
             {
-                var list = await operations.{{ r.lister }}(@namespace, watch: true);
+                var list = await operations.{{ r.http_message_lister }}(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, {{ r.type }} obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject

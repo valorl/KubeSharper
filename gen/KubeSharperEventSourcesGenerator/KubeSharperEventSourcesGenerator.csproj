@@ -7,9 +7,13 @@
 
   <ItemGroup>
     <None Remove="EventSources.cs.sbn" />
+    <None Remove="Listers.cs.sbn" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Listers.cs.sbn">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="EventSources.cs.sbn">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
