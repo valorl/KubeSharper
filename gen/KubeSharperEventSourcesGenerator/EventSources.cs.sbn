@@ -1,0 +1,56 @@
+﻿{{
+    head = resources | array.first
+    tail = resources | array.offset 1
+}}
+
+
+
+using k8s;
+using k8s.Models;
+using KubeSharper.EventQueue;
+using KubeSharper.Reconcilliation;
+using KubeSharper.Utils;
+using System;
+using System.Threading.Tasks;
+
+namespace KubeSharper.EventSources
+{
+    public partial class EventSources : IEventSources
+    {
+
+        public EventSource<T> GetNamespacedFor<T>(IKubernetes operations, string @namespace)
+        {
+            var t = typeof(T);
+            if (t == typeof({{ head.type }})) return (EventSource<T>)(object){{ head.type }}(operations, @namespace);
+{{~ for r in tail ~}}
+            else if (t == typeof({{ r.type }})) return (EventSource<T>)(object){{ r.type }}(operations, @namespace);
+{{~ end ~}}
+            else throw new NotImplementedException();
+        }
+
+{{~ for r in resources ~}}
+
+        private EventSource<{{ r.type }}> {{ r.type }}(IKubernetes operations, string @namespace)
+        {
+            async Task<Watcher<{{ r.type }}>> WatchMaker(EventSourceHandler onEvent, IEventQueue<ReconcileRequest> queue)
+            {
+                var list = await operations.{{ r.lister }}(@namespace, watch: true);
+                var watch = list.Watch(async (WatchEventType et, {{ r.type }} obj) =>
+                {
+                    var metaObj = new KubernetesV1MetaObject
+                    {
+                        ApiVersion = obj.ApiVersion,
+                        Kind = obj.Kind,
+                        Metadata = obj.Metadata
+                    };
+                    await onEvent(et, metaObj, queue); 
+                }, OnError<{{ r.type }}>, OnClose<{{ r.type }}>);
+                return watch;
+            }
+
+            var source = new EventSource<{{ r.type }}>(WatchMaker);
+            return source;
+        }
+{{~ end ~}}
+    }
+}

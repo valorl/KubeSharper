@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace KubeSharperEventSourcesGenerator
@@ -13,11 +14,9 @@ namespace KubeSharperEventSourcesGenerator
         async static Task Main(string[] args)
         {
 
-			//var templatePath = args[1];
-			//var outputPath = args[2];
-
-			var templatePath = "EventSources.cs.sbn";
-			var outputPath = @"C:\Repos\KubeSharper\src\KubeSharper.EventSources\generated\EventSources.cs";
+			var templatePath = args.ElementAtOrDefault(1) ?? Path.GetFullPath("EventSources.cs.sbn");
+			var outputPath = args.ElementAtOrDefault(2)
+				?? Path.GetFullPath( @"..\..\..\..\..\src\KubeSharper.EventSources\generated\EventSources.cs");
 			
 			bool Filter(MethodInfo mi)
 			{
@@ -46,10 +45,9 @@ namespace KubeSharperEventSourcesGenerator
 			});
 
 			var template = Template.Parse(await File.ReadAllTextAsync(templatePath));
-
 			var rendered = await template.RenderAsync(new { Resources = resources });
 
-			await File.WriteAllTextAsync(outputPath, rendered);
+			await File.WriteAllTextAsync(outputPath, rendered, Encoding.UTF8);
 		}
 	}
 }
