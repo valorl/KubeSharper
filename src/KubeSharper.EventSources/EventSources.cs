@@ -2,20 +2,26 @@
 using KubeSharper.EventQueue;
 using KubeSharper.Reconcilliation;
 using KubeSharper.Utils;
+using Newtonsoft.Json.Linq;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace KubeSharper.EventSources
 {
     public partial class EventSources
     {
-        public EventSource<CustomResource> GetNamespacedForCustom<T>(IKubernetes operations, string @namespace)
+        public EventSource<CustomResource> GetNamespacedForCustom<T>(
+            IKubernetes operations, string @namespace, TimeSpan? resyncPeriod = null,
+            CancellationToken cancellationToken = default)
         {
             var crd = CustomResourceDefinition.For<T>();
-            async Task<Watcher<CustomResource>> WatchMaker(EventSourceHandler onEvent, IEventQueue<ReconcileRequest> queue)
+
+            async Task<Watcher<CustomResource>> WatchMaker(
+                EventSourceHandler onEvent, IEventQueue<ReconcileRequest> queue)
             {
                 var list = operations.ListNamespacedCustomObjectWithHttpMessagesAsync(
                     crd.Group, crd.Version, @namespace, crd.Plural, watch: true);
@@ -27,7 +33,7 @@ namespace KubeSharper.EventSources
                         Kind = obj.Kind,
                         Metadata = obj.Metadata
                     };
-                    await onEvent(et, metaObj, queue); 
+                    await onEvent(et.ToInternal(), metaObj, queue); 
                 },
                 (ex) => Log.Error(ex, "Error while processing watch event"),
                 () => Log.Debug($"Watch connection for {typeof(T).Name} closed"));
@@ -35,7 +41,17 @@ namespace KubeSharper.EventSources
                 return watch;
             }
 
-            var source = new EventSource<CustomResource>(WatchMaker, typeof(T).Name);
+            async Task<IList<CustomResource>> Lister()
+            {
+                var list = await operations.ListNamespacedCustomObjectAsync(
+                    crd.Group, crd.Version, @namespace, crd.Plural);
+                var jObj = (JObject)list;
+                var jItems = (JArray)jObj["items"];
+                return jItems.ToObject<List<CustomResource>>();
+            }
+
+            var source = new EventSource<CustomResource>(
+                WatchMaker, Lister, resyncPeriod, cancellationToken);
             return source;
         }
 

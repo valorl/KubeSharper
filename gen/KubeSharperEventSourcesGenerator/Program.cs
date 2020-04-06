@@ -16,15 +16,11 @@ namespace KubeSharperEventSourcesGenerator
         {
 
 			var eventSourcesFile = "EventSources.cs";
-			var listersFile = "Listers.cs";
 
 			var outputDir = args.ElementAtOrDefault(1)
 				?? Path.GetFullPath( @"..\..\..\..\..\src\KubeSharper.EventSources\generated");
 
-
-
 			await Generate("EventSources.cs", outputDir, GetEventSourceResources());
-			await Generate("Listers.cs", outputDir, GetListerResources());
 		}
 
 		private async static Task Generate(
@@ -62,35 +58,36 @@ namespace KubeSharperEventSourcesGenerator
 				.GetMethods().Where(Filter).Select(lister => new
 			{
 				HttpMessageLister = lister.Name,
+				Lister = lister.Name.Replace("WithHttpMessages", string.Empty),
 				Type = GetResourceType(lister)
 			});
 		}
 
-		private static IEnumerable<dynamic> GetListerResources()
-		{
-			bool Filter(MethodInfo mi)
-			{
-				var n = mi.Name;
-				return !n.Contains("WithHttpMessagesAsync")
-					&& n.StartsWith("ListNamespaced")
-					&& n.EndsWith("Async")
-					&& !n.Contains("Object");
-			}
+		//private static IEnumerable<dynamic> GetListerResources()
+		//{
+		//	bool Filter(MethodInfo mi)
+		//	{
+		//		var n = mi.Name;
+		//		return !n.Contains("WithHttpMessagesAsync")
+		//			&& n.StartsWith("ListNamespaced")
+		//			&& n.EndsWith("Async")
+		//			&& !n.Contains("Object");
+		//	}
 			
-			string GetResourceType(MethodInfo lister)
-			{
-				return lister.ReturnType
-					.GenericTypeArguments
-					.First().Name[0..^4];
-			}
+		//	string GetResourceType(MethodInfo lister)
+		//	{
+		//		return lister.ReturnType
+		//			.GenericTypeArguments
+		//			.First().Name[0..^4];
+		//	}
 
-			return typeof(KubernetesExtensions)
-				.GetMethods().Where(Filter).Select(lister => new
-			{
-				Lister = lister.Name,
-				Type = GetResourceType(lister)
-			});
-		}
+		//	return typeof(KubernetesExtensions)
+		//		.GetMethods().Where(Filter).Select(lister => new
+		//	{
+		//		Lister = lister.Name,
+		//		Type = GetResourceType(lister)
+		//	});
+		//}
 
 
 		

@@ -8,6 +8,8 @@ using KubeSharper.EventQueue;
 using KubeSharper.Reconcilliation;
 using KubeSharper.Utils;
 using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace KubeSharper.EventSources
@@ -15,19 +17,19 @@ namespace KubeSharper.EventSources
     public partial class EventSources : IEventSources
     {
 
-        public EventSource<T> GetNamespacedFor<T>(IKubernetes operations, string @namespace)
+        public EventSource<T> GetNamespacedFor<T>(IKubernetes operations, string @namespace, TimeSpan? resyncPeriod = null, CancellationToken cancellationToken = default)
         {
             var t = typeof(T);
-            if (t == typeof({{ head.type }})) return (EventSource<T>)(object){{ head.type }}(operations, @namespace);
+            if (t == typeof({{ head.type }})) return (EventSource<T>)(object){{ head.type }}(operations, @namespace, resyncPeriod, cancellationToken);
 {{~ for r in tail ~}}
-            else if (t == typeof({{ r.type }})) return (EventSource<T>)(object){{ r.type }}(operations, @namespace);
+            else if (t == typeof({{ r.type }})) return (EventSource<T>)(object){{ r.type }}(operations, @namespace, resyncPeriod, cancellationToken);
 {{~ end ~}}
             else throw new NotImplementedException();
         }
 
 {{~ for r in resources ~}}
 
-        private EventSource<{{ r.type }}> {{ r.type }}(IKubernetes operations, string @namespace)
+        private EventSource<{{ r.type }}> {{ r.type }}(IKubernetes operations, string @namespace, TimeSpan? resyncPeriod, CancellationToken ct)
         {
             async Task<Watcher<{{ r.type }}>> WatchMaker(EventSourceHandler onEvent, IEventQueue<ReconcileRequest> queue)
             {
@@ -40,12 +42,24 @@ namespace KubeSharper.EventSources
                         Kind = obj.Kind,
                         Metadata = obj.Metadata
                     };
-                    await onEvent(et, metaObj, queue); 
+                    await onEvent(et.ToInternal(), metaObj, queue); 
                 }, OnError<{{ r.type }}>, OnClose<{{ r.type }}>);
                 return watch;
             }
 
-            var source = new EventSource<{{ r.type }}>(WatchMaker);
+            async Task<IList<{{ r.type }}>> Lister()
+            {
+                var list = await operations.{{ r.lister }}(@namespace);
+                var kind = list.Kind.Replace("List", "");
+                foreach (var i in list.Items)
+                {
+                    i.ApiVersion = list.ApiVersion;
+                    i.Kind = kind;
+                }
+                return list.Items;
+            }
+
+            var source = new EventSource<{{ r.type }}>(WatchMaker, Lister, resyncPeriod, ct);
             return source;
         }
 {{~ end ~}}

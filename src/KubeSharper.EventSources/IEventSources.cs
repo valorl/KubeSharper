@@ -4,12 +4,13 @@ using KubeSharper.Utils;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 namespace KubeSharper.EventSources
 {
     public interface IEventSources
     {
-        EventSource<T> GetNamespacedFor<T>(IKubernetes operations, string @namespace);
-        EventSource<CustomResource> GetNamespacedForCustom<T>(IKubernetes operations, string @namespace);
+        EventSource<T> GetNamespacedFor<T>(IKubernetes operations, string @namespace, TimeSpan? resyncPeriod = null, CancellationToken ct = default);
+        EventSource<CustomResource> GetNamespacedForCustom<T>(IKubernetes operations, string @namespace, TimeSpan? resyncPeriod = null, CancellationToken ct = default);
     }
 }

@@ -78,16 +78,16 @@ namespace KubeSharper.Services
         }
 
 
-        public void AddWatch<TObject>(string @namespace, EventSourceHandler handler)
+        public void AddWatch<T>(string @namespace, EventSourceHandler handler, TimeSpan? resyncPeriod = null)
         {
             IEventSource source;
-            if(typeof(TObject).IsSubclassOf(typeof(CustomResource)))
+            if(typeof(T).IsSubclassOf(typeof(CustomResource)))
             {
-                source = _eventSources.GetNamespacedForCustom<TObject>(_client, @namespace);
+                source = _eventSources.GetNamespacedForCustom<T>(_client, @namespace, resyncPeriod);
             }
             else
             {
-                source = _eventSources.GetNamespacedFor<TObject>(_client, @namespace);
+                source = _eventSources.GetNamespacedFor<T>(_client, @namespace, resyncPeriod);
             }
             _watches.Add(new WatchInfo(source, @namespace, handler));
         }
@@ -118,6 +118,7 @@ namespace KubeSharper.Services
             }
             _cts.Cancel();
         }
+
 
         private async Task ReconcileLoop(CancellationToken ct)
         {

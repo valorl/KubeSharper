@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KubeSharper.Utils;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -10,6 +11,10 @@ namespace KubeSharper.Reconcilliation
         public string Kind { get; set; }
         public string Namespace { get; set; }
         public string Name { get; set; }
+        public ReconcileRequest()
+        {
+
+        }
         public override string ToString()
         {
             return $"{ApiVersion}/{Namespace}/{Kind}/{Name}";

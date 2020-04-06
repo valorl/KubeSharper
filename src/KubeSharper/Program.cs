@@ -27,13 +27,20 @@ namespace KubeSharper
             var config = KubernetesClientConfiguration.BuildConfigFromConfigFile(configFile);
             var client = new Kubernetes(config);
 
+            var secrets = await client.ListNamespacedSecretWithHttpMessagesAsync("default");
+
+
+
             var controller = new Controller(client, new EventQueueFactory<ReconcileRequest>(), new EventSources.EventSources(), req =>
             {
                 Log.Information($"{req}");
                 return Task.FromResult(new ReconcileResult());
             });
 
-            controller.AddWatch<Example>("default", Handlers.ObjectEnqueuer());
+            //controller.AddWatch<Example>("default", Handlers.ObjectEnqueuer());
+            //controller.AddWatch<V1Pod>("default", Handlers.ObjectEnqueuer());
+            var resync = TimeSpan.FromSeconds(10);
+            controller.AddWatch<V1Secret>("default", Handlers.ObjectEnqueuer(), resync);
             await controller.Start();
 
 

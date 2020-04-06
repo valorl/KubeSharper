@@ -12,21 +12,21 @@ namespace KubeSharper.EventSources
 {
     public partial class Listers
     {
-        public Lister<T> GetNamespacedFor<T>(IKubernetes operations)
+        public Lister<T> GetNamespacedFor<T>(IKubernetes operations, string @namespace)
         {
             var t = typeof(T);
-            if (t == typeof({{ head.type }})) return (Lister<T>)(object){{ head.type }}(operations);
+            if (t == typeof({{ head.type }})) return (Lister<T>)(object){{ head.type }}(operations, @namespace);
 {{~ for r in tail ~}}
-            else if (t == typeof({{ r.type }})) return (Lister<T>)(object){{ r.type }}(operations);
+            else if (t == typeof({{ r.type }})) return (Lister<T>)(object){{ r.type }}(operations, @namespace);
 {{~ end ~}}
             else throw new NotImplementedException();
         }
 
 {{~ for r in resources ~}}
 
-        public Lister<{{ r.type }}> {{ r.type }}(IKubernetes operations)
+        public Lister<{{ r.type }}> {{ r.type }}(IKubernetes operations, string @namespace)
         {
-            async Task<IList<{{ r.type }}>> ListerFunc(string @namespace)
+            async Task<IList<{{ r.type }}>> ListerFunc()
             {
                 var list = await operations.{{ r.lister }}(@namespace);
                 return list.Items;
