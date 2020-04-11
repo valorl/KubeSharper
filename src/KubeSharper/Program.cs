@@ -26,27 +26,36 @@ namespace KubeSharper
             var configFile = @"C:\Users\vao\kubeconfig.yaml";
             var config = KubernetesClientConfiguration.BuildConfigFromConfigFile(configFile);
             var client = new Kubernetes(config);
+            client.
 
             var secrets = await client.ListNamespacedSecretWithHttpMessagesAsync("default");
 
+            var manager = new Manager(client);
 
 
-            var controller = new Controller(client, new EventQueueFactory<ReconcileRequest>(), new EventSources.EventSources(), req =>
+            var controller = new Controller(manager, req =>
             {
                 Log.Information($"{req}");
                 return Task.FromResult(new ReconcileResult());
             });
 
-            //controller.AddWatch<Example>("default", Handlers.ObjectEnqueuer());
-            //controller.AddWatch<V1Pod>("default", Handlers.ObjectEnqueuer());
             var resync = TimeSpan.FromSeconds(10);
             controller.AddWatch<V1Secret>("default", Handlers.ObjectEnqueuer(), resync);
-            await controller.Start();
+            controller.AddWatch<V1Pod>("kube-system", Handlers.ObjectEnqueuer(), resync);
+
+            //await controller.Start(cts.Token);
+
+            manager.Start(cts.Token);
 
 
             var ctrlc = new ManualResetEventSlim(false);
-            Console.CancelKeyPress += (sender, eventArgs) => { controller.Dispose(); ctrlc.Set(); };
+            Console.CancelKeyPress += (sender, eventArgs) => {
+                eventArgs.Cancel = true;
+                manager.Dispose();
+                ctrlc.Set();
+            };
             ctrlc.Wait();
+            Console.WriteLine();
         }
     }
 }

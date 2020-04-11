@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace KubeSharper.Services
 {
-    public sealed class Controller : IDisposable
+    public sealed class Controller : IStartable
     {
         class WatchInfo
         {
@@ -30,64 +30,48 @@ namespace KubeSharper.Services
                 Handler = handler;
             }
         }
-        class ReconcileWrapper : IReconciler
-        {
-            private readonly ReconcileFunc _reconciler;
-            public ReconcileWrapper(ReconcileFunc reconciler)
-            {
-                _reconciler = reconciler;
-            }
 
-            public async Task<ReconcileResult> Reconcile(ReconcileRequest request)
-            {
-                return await _reconciler(request);
-            }
-        }
+        public string Id => Guid.NewGuid().ToString("N")[..6];
 
-        private readonly IKubernetes _client;
-        private readonly IReconciler _reconciler;
-        private readonly IEventQueue<ReconcileRequest> _queue;
-        private readonly IEventSources _eventSources;
+        internal IKubernetes Client { get; set; }
+        internal IReconciler Reconciler { get; set; }
+        internal IEventQueue<ReconcileRequest> Queue { get; set; }
+        internal IEventSources EventSources { get; set; }
 
         private readonly List<WatchInfo> _watches = new List<WatchInfo>();
         private Task _reconcileLoop;
         private CancellationTokenSource _cts;
 
-        public Controller(IKubernetes client,
-            IEventQueueFactory<ReconcileRequest> queueFactory,
-            IEventSources eventSources,
-            IReconciler reconciler) : this(client, queueFactory, eventSources)
+        public Controller(Manager manager, IReconciler reconciler) : this(manager)
         {
-            _reconciler = reconciler;
+            Reconciler = reconciler;
         }
-        public Controller(IKubernetes client,
-            IEventQueueFactory<ReconcileRequest> queueFactory,
-            IEventSources eventSources,
-            ReconcileFunc reconciler) : this(client, queueFactory, eventSources)
+        public Controller(Manager manager, ReconcileFunc func) : this(manager)
         {
-            _reconciler = new ReconcileWrapper(reconciler);
+            Reconciler = func.ToReconciler();
         }
 
-        private Controller(IKubernetes client,
-            IEventQueueFactory<ReconcileRequest> queueFactory,
-            IEventSources eventSources)
+        internal Controller(Manager manager)
         {
-            _client = client;
-            _eventSources = eventSources;
-            _queue = queueFactory.NewEventQueue();
+            Client = manager.Client;
+            EventSources = manager.EventSources;
+            Queue = new EventQueue<ReconcileRequest>();
+
+            manager.Add(this);
         }
 
+        internal Controller() {}
 
         public void AddWatch<T>(string @namespace, EventSourceHandler handler, TimeSpan? resyncPeriod = null)
         {
             IEventSource source;
-            if(typeof(T).IsSubclassOf(typeof(CustomResource)))
+            if (typeof(T).IsSubclassOf(typeof(CustomResource)))
             {
-                source = _eventSources.GetNamespacedForCustom<T>(_client, @namespace, resyncPeriod);
+                source = EventSources.GetNamespacedForCustom<T>(Client, @namespace, resyncPeriod);
             }
             else
             {
-                source = _eventSources.GetNamespacedFor<T>(_client, @namespace, resyncPeriod);
+                source = EventSources.GetNamespacedFor<T>(Client, @namespace, resyncPeriod);
             }
             _watches.Add(new WatchInfo(source, @namespace, handler));
         }
@@ -104,7 +88,7 @@ namespace KubeSharper.Services
             foreach (var w in _watches)
             {
                 Log.Debug($"Starting source for {w.Source.ObjectType}");
-                await w.Source.Start(w.Handler, _queue);
+                await w.Source.Start(w.Handler, Queue);
             }
 
             _reconcileLoop = ReconcileLoop(_cts.Token);
@@ -112,11 +96,17 @@ namespace KubeSharper.Services
 
         public void Dispose()
         {
-            foreach(var w in _watches)
+            _cts.Cancel();
+            foreach (var w in _watches)
             {
                 w.Source.Dispose();
             }
-            _cts.Cancel();
+        }
+
+        private void Initialize(Manager manager)
+        {
+            //TODO
+            return;
         }
 
 
@@ -126,10 +116,10 @@ namespace KubeSharper.Services
             while(!ct.IsCancellationRequested)
             {
 
-                _queue.TryGet(out var req);
+                Queue.TryGet(out var req);
                 if (req == null) continue;
 
-                var result = await _reconciler.Reconcile(req);
+                var result = await Reconciler.Reconcile(req);
                 if(result.Requeue)
                 {
                     _ = Requeue(req, result.RequeueAfter, ct);
@@ -144,7 +134,7 @@ namespace KubeSharper.Services
                 await Task.Delay(after, ct);
             }
 
-            if (!await _queue.TryAdd(req))
+            if (!await Queue.TryAdd(req))
             {
                 Log.Error($"Failed requeueing {req.ApiVersion}/{req.Namespace}/{req.Kind}/{req.Name}");
             }
