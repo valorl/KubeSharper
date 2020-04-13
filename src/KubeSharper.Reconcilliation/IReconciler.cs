@@ -10,15 +10,21 @@ namespace KubeSharper.Reconcilliation
         Task<ReconcileResult> Reconcile(ReconcileContext context, ReconcileRequest request);
     }
 
-    public delegate Task<ReconcileResult> ReconcileFunc(
-        ReconcileContext context, ReconcileRequest request);
+    public static class Reconciler
+    {
+        public static IReconciler Wrap(
+            Func<ReconcileContext,ReconcileRequest,Task<ReconcileResult>> func)
+        {
+            return new ReconcileWrapper(func);
+        }
+    }
 
     class ReconcileWrapper : IReconciler
     {
-        private readonly ReconcileFunc _reconciler;
-        public ReconcileWrapper(ReconcileFunc reconciler)
+        private readonly Func<ReconcileContext,ReconcileRequest,Task<ReconcileResult>> _reconciler;
+        public ReconcileWrapper(Func<ReconcileContext,ReconcileRequest,Task<ReconcileResult>> func)
         {
-            _reconciler = reconciler;
+            _reconciler = func;
         }
 
         public async Task<ReconcileResult> Reconcile(
@@ -26,10 +32,5 @@ namespace KubeSharper.Reconcilliation
         {
             return await _reconciler(context, request);
         }
-    }
-
-    public static class ReconcileFuncExt
-    {
-        public static IReconciler ToReconciler(this ReconcileFunc f) => new ReconcileWrapper(f);
     }
 }

@@ -10,7 +10,7 @@ namespace KubeSharper.EventSources
 {
     public interface IEventSources
     {
-        EventSource<T> GetNamespacedFor<T>(IKubernetes operations, string @namespace, TimeSpan? resyncPeriod = null, CancellationToken ct = default);
-        EventSource<CustomResource> GetNamespacedForCustom<T>(IKubernetes operations, string @namespace, TimeSpan? resyncPeriod = null, CancellationToken ct = default);
+        EventSource<T> GetNamespacedFor<T>(IKubernetes operations, string @namespace, CancellationToken ct = default);
+        EventSource<CustomResource> GetNamespacedForCustom<T>(IKubernetes operations, string @namespace, CancellationToken ct = default);
     }
 }

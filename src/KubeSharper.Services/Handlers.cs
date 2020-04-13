@@ -14,7 +14,8 @@ namespace KubeSharper.Reconcilliation
 {
     public static class Handlers
     {
-        public static EventSourceHandler ObjectEnqueuer()
+        public delegate Task EnqueueingHandler(EventType et, KubernetesV1MetaObject obj, IEventQueue<ReconcileRequest> queue);
+        public static EnqueueingHandler ObjectEnqueuer()
         {
             return LogException(async (et, obj, q) =>
             {
@@ -23,7 +24,7 @@ namespace KubeSharper.Reconcilliation
             });
         }
 
-        public static EventSourceHandler OwnerEnqueuer(OwnerInfo info)
+        public static EnqueueingHandler OwnerEnqueuer(OwnerInfo info)
         {
             return LogException(async (et, obj, q) =>
             {
@@ -78,7 +79,7 @@ namespace KubeSharper.Reconcilliation
             }
         }
 
-        private static EventSourceHandler LogException(EventSourceHandler h)
+        private static EnqueueingHandler LogException(EnqueueingHandler h)
         {
             return async (et, obj, q) =>
             {

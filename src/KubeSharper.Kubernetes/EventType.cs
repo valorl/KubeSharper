@@ -11,7 +11,7 @@ namespace KubeSharper.Utils
         Modified,
         Deleted,
         Error,
-        Generic
+        Resync
     }
 
     public static class WatchEventTypeExt

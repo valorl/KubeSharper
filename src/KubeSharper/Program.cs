@@ -32,15 +32,19 @@ namespace KubeSharper
             var manager = Manager.CreateAsync(config);
 
 
-            var controller = new Controller(manager, (ctx, req) =>
+            var controller = new Controller(manager, new ControllerOptions
             {
-                Log.Information($"{req}");
-                return Task.FromResult(new ReconcileResult());
-            });
+                ResyncPeriod = TimeSpan.FromSeconds(10),
+                Reconciler = Reconciler.Wrap((ctx, req) =>
+                {
+                    Log.Information($"{req}");
+                    return Task.FromResult(new ReconcileResult());
+                })
+            }); ; 
 
             var resync = TimeSpan.FromSeconds(10);
-            controller.AddWatch<V1Secret>("default", Handlers.ObjectEnqueuer(), resync);
-            controller.AddWatch<V1Pod>("kube-system", Handlers.ObjectEnqueuer(), resync);
+            controller.AddWatch<V1Secret>("default", Handlers.ObjectEnqueuer());
+            controller.AddWatch<V1Pod>("kube-system", Handlers.ObjectEnqueuer());
 
             //await controller.Start(cts.Token);
 

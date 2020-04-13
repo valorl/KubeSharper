@@ -15,42 +15,38 @@ namespace KubeSharper.EventSources
     public interface IEventSource : IDisposable
     {
         string ObjectType { get; }
-        Task Start(EventSourceHandler handler, IEventQueue<ReconcileRequest> queue);
+        bool IsRunning { get; }
+        Task Start(EventSourceHandler handler);
+        Task<IList<KubernetesV1MetaObject>> ListMetaObjects();
     }
 
-    public delegate Task EventSourceHandler(EventType et, KubernetesV1MetaObject obj, IEventQueue<ReconcileRequest> queue);
+    public delegate Task EventSourceHandler(EventType et, KubernetesV1MetaObject obj);
 
 
     public sealed class EventSource<T> : IEventSource
     {
         private readonly CancellationTokenSource _cts;
 
-        internal delegate Task<Watcher<T>> WatchMaker(EventSourceHandler h, IEventQueue<ReconcileRequest> q);
+        internal delegate Task<Watcher<T>> WatchMaker(EventSourceHandler h);
         private readonly WatchMaker _watchMaker;
 
         internal delegate Task<IList<T>> Lister();
         private readonly Lister _lister;
-        private readonly TimeSpan _resyncPeriod;
-
 
         private Watcher<T> _watcher;
-        private Task _resyncLoop;
 
         public string ObjectType { get; }
-
+        public bool IsRunning => _watcher.Watching;
 
 
         internal EventSource(
             WatchMaker watchMaker,
             Lister lister,
-            TimeSpan? resyncPeriod = null,
             CancellationToken cancellationToken = default,
             string objectType = null)
         {
             _watchMaker = watchMaker;
             _lister = lister;
-
-            _resyncPeriod = resyncPeriod ?? TimeSpan.FromHours(10);
             ObjectType = objectType ?? typeof(T).Name;
 
             _cts = cancellationToken == CancellationToken.None
@@ -58,40 +54,17 @@ namespace KubeSharper.EventSources
                 : CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         }
 
-        public async Task Start(EventSourceHandler handler, IEventQueue<ReconcileRequest> queue)
+        public async Task Start(EventSourceHandler handler)
         {
             Log.Debug($"Event source {ObjectType} starting");
-            _watcher = await _watchMaker(handler.Invoke, queue).ConfigureAwait(false);
-
-            _resyncLoop = ResyncLoop(handler, queue, _cts.Token);
+            _watcher = await _watchMaker(handler.Invoke).ConfigureAwait(false);
         }
 
-        public void Dispose()
+        public async Task<IList<KubernetesV1MetaObject>> ListMetaObjects()
         {
-            _cts.Cancel();
-            _watcher.Dispose();
-        }
-
-        private async Task ResyncLoop(
-            EventSourceHandler handler, IEventQueue<ReconcileRequest> queue, CancellationToken ct)
-        {
-            while (!ct.IsCancellationRequested)
+            var metaObjects = new List<KubernetesV1MetaObject>();
+            foreach (var o in await _lister())
             {
-                await Task.Delay(_resyncPeriod.WithJitter(0.1), ct);
-                await ListAndHandle(handler, queue, ct);
-            }
-        }
-
-        private async Task ListAndHandle(
-            EventSourceHandler handler, IEventQueue<ReconcileRequest> queue, CancellationToken ct)
-        {
-            Log.Debug($"[Resync: {ObjectType}] Timer tick");
-            var objects = await _lister();
-            Log.Debug($"[Resync: {ObjectType}] List found {objects.Count} objects");
-            foreach (var o in objects)
-            {
-                if (ct.IsCancellationRequested) break;
-
                 dynamic d = o; //TODO: Is there a better way to do this?
                 var metaObj = new KubernetesV1MetaObject
                 {
@@ -99,8 +72,15 @@ namespace KubeSharper.EventSources
                     Kind = d.Kind,
                     Metadata = d.Metadata
                 };
-                await handler(EventType.Generic, metaObj, queue);
+                metaObjects.Add(metaObj);
             }
+            return metaObjects;
+        }
+
+        public void Dispose()
+        {
+            _cts.Cancel();
+            _watcher.Dispose();
         }
     }
 }

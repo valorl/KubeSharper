@@ -15,13 +15,12 @@ namespace KubeSharper.EventSources
     public partial class EventSources
     {
         public EventSource<CustomResource> GetNamespacedForCustom<T>(
-            IKubernetes operations, string @namespace, TimeSpan? resyncPeriod = null,
+            IKubernetes operations, string @namespace,
             CancellationToken cancellationToken = default)
         {
             var crd = CustomResourceDefinition.For<T>();
 
-            async Task<Watcher<CustomResource>> WatchMaker(
-                EventSourceHandler onEvent, IEventQueue<ReconcileRequest> queue)
+            async Task<Watcher<CustomResource>> WatchMaker( EventSourceHandler onEvent)
             {
                 var list = operations.ListNamespacedCustomObjectWithHttpMessagesAsync(
                     crd.Group, crd.Version, @namespace, crd.Plural, watch: true);
@@ -33,7 +32,7 @@ namespace KubeSharper.EventSources
                         Kind = obj.Kind,
                         Metadata = obj.Metadata
                     };
-                    await onEvent(et.ToInternal(), metaObj, queue); 
+                    await onEvent(et.ToInternal(), metaObj); 
                 },
                 (ex) => Log.Error(ex, "Error while processing watch event"),
                 () => Log.Debug($"Watch connection for {typeof(T).Name} closed"));
@@ -51,7 +50,7 @@ namespace KubeSharper.EventSources
             }
 
             var source = new EventSource<CustomResource>(
-                WatchMaker, Lister, resyncPeriod, cancellationToken);
+                WatchMaker, Lister, cancellationToken);
             return source;
         }
 

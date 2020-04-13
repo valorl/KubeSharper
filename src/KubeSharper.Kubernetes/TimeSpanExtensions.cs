@@ -14,10 +14,20 @@ namespace KubeSharper.Utils
         ///
         public static TimeSpan WithJitter(this TimeSpan timeSpan, double maxFactor)
         {
+            return timeSpan + timeSpan.GetJitter(maxFactor);
+        }
+        /// <summary>
+        /// Gets random jitter based on <paramref name="timeSpan"/>,
+        /// returning a <c>TimeSpan</c> between <c>TimeSpan.Zero</c>
+        /// and <c><paramref name="timeSpan"/>*<paramref name="maxFactor"/></c>
+        /// </summary>
+        ///
+        public static TimeSpan GetJitter(this TimeSpan timeSpan, double maxFactor)
+        {
             var ms = timeSpan.TotalMilliseconds;
             var rand = new Random();
             var jitter = rand.NextDouble() * maxFactor * ms;
-            return TimeSpan.FromMilliseconds(ms + jitter);
+            return TimeSpan.FromMilliseconds(jitter);
         }
     }
 }
