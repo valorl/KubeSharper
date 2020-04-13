@@ -26,11 +26,10 @@ namespace KubeSharper
             var configFile = @"C:\Users\vao\kubeconfig.yaml";
             var config = KubernetesClientConfiguration.BuildConfigFromConfigFile(configFile);
             var client = new Kubernetes(config);
-            client.
 
             var secrets = await client.ListNamespacedSecretWithHttpMessagesAsync("default");
 
-            var manager = new Manager(client);
+            var manager = Manager.CreateAsync(config);
 
 
             var controller = new Controller(manager, req =>
