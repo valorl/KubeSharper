@@ -113,13 +113,14 @@ namespace KubeSharper.Services
         private async Task ReconcileLoop(CancellationToken ct)
         {
             Log.Debug("Entering reconcile loop");
+            var ctx = new ReconcileContext(Client);
             while(!ct.IsCancellationRequested)
             {
 
                 Queue.TryGet(out var req);
                 if (req == null) continue;
 
-                var result = await Reconciler.Reconcile(req);
+                var result = await Reconciler.Reconcile(ctx, req);
                 if(result.Requeue)
                 {
                     _ = Requeue(req, result.RequeueAfter, ct);

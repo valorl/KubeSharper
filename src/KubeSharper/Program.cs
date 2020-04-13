@@ -32,7 +32,7 @@ namespace KubeSharper
             var manager = Manager.CreateAsync(config);
 
 
-            var controller = new Controller(manager, req =>
+            var controller = new Controller(manager, (ctx, req) =>
             {
                 Log.Information($"{req}");
                 return Task.FromResult(new ReconcileResult());
