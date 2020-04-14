@@ -110,7 +110,11 @@ namespace KubeSharper.Services
             {
 
                 Queue.TryGet(out var req);
-                if (req == null) continue;
+                if (req == null)
+                {
+                    await Task.Delay(1000);
+                    continue;
+                }
 
                 var result = await Reconciler.Reconcile(ctx, req);
                 if(result.Requeue)
