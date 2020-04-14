@@ -22,10 +22,11 @@ namespace KubeSharper.Services
     {
         class WatchInfo
         {
-            public IEventSource Source { get; }
+            public ISharedEventSource Source { get; }
             public string Namespace { get; }
             public EnqueueingHandler Handler { get; }
-            public WatchInfo(IEventSource source, string @namespace, EnqueueingHandler handler)
+            public IDisposable Subscription { get; set; }
+            public WatchInfo(ISharedEventSource source, string @namespace, EnqueueingHandler handler)
             {
                 Source = source;
                 Namespace = @namespace;
@@ -43,14 +44,14 @@ namespace KubeSharper.Services
         internal IKubernetes Client { get; set; }
         internal IReconciler Reconciler { get; set; }
         internal IEventQueue<ReconcileRequest> Queue { get; set; }
-        internal IEventSources EventSources { get; set; }
+        internal IEventSourceCache Cache { get; set; }
         internal TimeSpan ResyncPeriod { get; set; }
 
 
         public Controller(Manager manager, ControllerOptions opts)
         {
             Client = manager.Client;
-            EventSources = manager.EventSources;
+            Cache = manager.Cache;
             Reconciler = opts.Reconciler;
             ResyncPeriod = opts.ResyncPeriod;
 
@@ -62,19 +63,11 @@ namespace KubeSharper.Services
 
         public void AddWatch<T>(string @namespace, EnqueueingHandler handler)
         {
-            IEventSource source;
-            if (typeof(T).IsSubclassOf(typeof(CustomResource)))
-            {
-                source = EventSources.GetNamespacedForCustom<T>(Client, @namespace);
-            }
-            else
-            {
-                source = EventSources.GetNamespacedFor<T>(Client, @namespace);
-            }
+            var source = Cache.GetNamespacedFor<T>(@namespace);
             _watches.Add(new WatchInfo(source, @namespace, handler));
         }
 
-        public async Task Start(CancellationToken ct = default)
+        public Task Start(CancellationToken ct = default)
         {
             _cts = (ct == CancellationToken.None) switch
             {
@@ -82,15 +75,15 @@ namespace KubeSharper.Services
                 false => CancellationTokenSource.CreateLinkedTokenSource(ct)
             };
 
-
             foreach (var w in _watches)
             {
                 Log.Debug($"Starting source for {w.Source.ObjectType}");
-                await w.Source.Start(w.Handler.ToEventSourceHandler(Queue));
+                w.Source.Subscribe(w.Handler.ToEventSourceHandler(Queue));
             }
 
             _reconcileLoop = ReconcileLoop(_cts.Token);
             _resyncLoop = ResyncLoop(_cts.Token);
+            return Task.CompletedTask;
         }
 
         public void Dispose()

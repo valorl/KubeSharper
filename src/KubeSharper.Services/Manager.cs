@@ -13,7 +13,7 @@ namespace KubeSharper.Services
     public class Manager : IDisposable
     {
         public IKubernetes Client { get;}
-        internal IEventSources EventSources { get; }
+        internal IEventSourceCache Cache { get; }
 
         private CancellationTokenSource _cts;
 
@@ -21,15 +21,15 @@ namespace KubeSharper.Services
 
         public static Manager CreateAsync(KubernetesClientConfiguration kubeConfig)
         {
-            return new Manager(kubeConfig);
+            var sources = new EventSources.EventSources();
+            var client = new Kubernetes(kubeConfig);
+            var cache = new EventSourceCache(sources, client);
+            return new Manager(client, cache);
         }
-        private Manager(KubernetesClientConfiguration kubeConfig)
-           : this(new Kubernetes(kubeConfig), new EventSources.EventSources()) {}
-
-        internal Manager(IKubernetes client, IEventSources sources)
+        internal Manager(IKubernetes client, IEventSourceCache cache)
         {
             Client = client;
-            EventSources = sources;
+            Cache = cache;
 
             _cts = new CancellationTokenSource();
         }
@@ -52,6 +52,7 @@ namespace KubeSharper.Services
                 Log.Information($"[Startable {id}] Finished");
             }
 
+            //TODO: This should just finish execution normally, the loops run on their own (out of Start)
             var tasks = _startables.Select(s =>
                 s.Start(_cts.Token)
                 .ContinueWith(t => OnFinished(t, s.Id)))
