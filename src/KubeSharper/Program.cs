@@ -29,26 +29,24 @@ namespace KubeSharper
 
             var secrets = await client.ListNamespacedSecretWithHttpMessagesAsync("default");
 
-            var manager = Manager.CreateAsync(config);
-
+            var manager = await Manager.Create(config);
 
             var controller = new Controller(manager, new ControllerOptions
             {
-                ResyncPeriod = TimeSpan.FromSeconds(10),
+                //ResyncPeriod = TimeSpan.FromSeconds(10),
                 Reconciler = Reconciler.Wrap((ctx, req) =>
                 {
                     Log.Information($"{req}");
                     return Task.FromResult(new ReconcileResult());
                 })
-            }); ; 
+            }); ;
 
-            var resync = TimeSpan.FromSeconds(10);
             controller.AddWatch<V1Secret>("default", Handlers.ObjectEnqueuer());
             controller.AddWatch<V1Pod>("kube-system", Handlers.ObjectEnqueuer());
 
             //await controller.Start(cts.Token);
 
-            manager.Start(cts.Token);
+            await manager.Start(cts.Token);
 
 
             var ctrlc = new ManualResetEventSlim(false);

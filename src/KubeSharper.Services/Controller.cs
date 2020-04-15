@@ -99,16 +99,8 @@ namespace KubeSharper.Services
         {
             Log.Debug("Entering reconcile loop");
             var ctx = new ReconcileContext(Client);
-            while(!ct.IsCancellationRequested)
+            await foreach (var req in Queue.GetStream().WithCancellation(ct))
             {
-
-                Queue.TryGet(out var req);
-                if (req == null)
-                {
-                    await Task.Delay(1000);
-                    continue;
-                }
-
                 var result = await Reconciler.Reconcile(ctx, req);
                 if(result.Requeue)
                 {
@@ -136,9 +128,10 @@ namespace KubeSharper.Services
         private async Task ResyncLoop(CancellationToken ct)
         {
             Log.Debug($"[Resync: <MAIN LOOP>] Entered.");
+            var sw = new Stopwatch();
             while (!ct.IsCancellationRequested)
             {
-                var sw = new Stopwatch();
+                sw.Restart();
                 await Task.Delay(ResyncPeriod, ct);
                 Log.Debug($"[Resync: <MAIN LOOP>] Done waiting at 0+{sw.Elapsed}");
                 var tasks = _watches.Select(w => ResyncWatch(w, ct, sw));

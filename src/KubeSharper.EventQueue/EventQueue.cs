@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,6 +13,7 @@ namespace KubeSharper.EventQueue
         private readonly Queue<T> _items = new Queue<T>();
         private readonly Dictionary<T, byte> _set = new Dictionary<T, byte>();
         private static readonly object _lock = new object();
+        private readonly SemaphoreSlim _sem = new SemaphoreSlim(0);
 
 
         public int Count => _items.Count;
@@ -21,34 +23,35 @@ namespace KubeSharper.EventQueue
             Log.Debug($"Trying to add {item}");
             lock (_lock)
             {
-                if (SetAdd(item))
-                {
-                    _items.Enqueue(item);
-                    Log.Debug($"{item} enqueued");
-                    return true;
-                }
-                return false;
+                if (!SetAdd(item)) return false; 
+                _items.Enqueue(item);
+                _sem.Release(1);
             }
+            Log.Debug($"{item} enqueued");
+            return await Task.FromResult(true);
         }
 
-        public bool TryGet(out T item)
+        public async Task<T> Take(CancellationToken ct = default)
         {
+            await _sem.WaitAsync(ct);
+            T dequeued;
             lock(_lock)
             {
-                if(_items.Count == 0)
-                {
-                    item = default;
-                    return false;
-                }
-
-                var dequeued = _items.Dequeue();
+                dequeued = _items.Dequeue();
                 Log.Debug($"Dequeued {dequeued}");
                 
                 Log.Debug($"Removing {dequeued} from set");
                 SetRemove(dequeued);
+            }
+            return dequeued;
+        }
 
-                item = dequeued;
-                return true;
+        public async IAsyncEnumerable<T> GetStream(
+            [EnumeratorCancellation] CancellationToken ct = default)
+        {
+            while(!ct.IsCancellationRequested)
+            {
+                yield return await Take(ct);
             }
         }
 
