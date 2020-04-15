@@ -19,7 +19,7 @@ namespace KubeSharper.Services
 
         private readonly List<IStartable> _startables = new List<IStartable>();
 
-        public static Manager CreateAsync(KubernetesClientConfiguration kubeConfig)
+        public static async Task<Manager> Create(KubernetesClientConfiguration kubeConfig)
         {
             var sources = new EventSources.EventSources();
             var client = new Kubernetes(kubeConfig);
@@ -34,7 +34,7 @@ namespace KubeSharper.Services
             _cts = new CancellationTokenSource();
         }
 
-        public void Start(CancellationToken ct = default)
+        public async Task Start(CancellationToken ct = default)
         {
             _cts = (ct == CancellationToken.None) switch
             {
@@ -47,16 +47,20 @@ namespace KubeSharper.Services
                 var ex = task.Exception;
                 if(ex != null && ex.InnerException != null)
                 {
-                    Log.Error(ex, $"[Startable: {id}] Exception thrown");
+                    Log.Error(ex, $"[Manager] Exception when starting {id}");
                 }
-                Log.Information($"[Startable {id}] Finished");
+                Log.Information($"[Manager] Finished starting {id}");
             }
 
-            //TODO: This should just finish execution normally, the loops run on their own (out of Start)
+            // Have all controllers subscribe to all watches and start their loops
             var tasks = _startables.Select(s =>
                 s.Start(_cts.Token)
                 .ContinueWith(t => OnFinished(t, s.Id)))
                 .ToList();
+            await Task.WhenAll(tasks);
+
+            //Now start the event sources
+            await Cache.StartAll();
         }
 
         public void Add(IStartable startable) => _startables.Add(startable);
