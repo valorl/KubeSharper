@@ -29,22 +29,19 @@ namespace AcmeWorkloadOperator
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services
-                    .AddKubeSharperManager(@"C:\Users\vao\kubeconfig.yaml")
-                        .WithController(cfg =>
+                    services.AddSingleton<AcmeReconciler>();
+
+                    services.KubeSharperManager(@"C:\Users\vao\kubeconfig.yaml")
+                        .WithController((sp, cfg) =>
                         {
                             cfg.Watch<V1Secret>("default", Handlers.ObjectEnqueuer());
                             cfg.Watch<V1Pod>("kube-system", Handlers.ObjectEnqueuer());
 
-                            cfg.Options.Reconciler = Reconciler.Wrap(async (ctx, req) =>
-                            {
-                                Log.Information("Reconciler is totally reconiling right now...");
-                                return await Task.FromResult(new ReconcileResult());
-                            });
+                            cfg.Options.Reconciler = sp.GetRequiredService<AcmeReconciler>();
                             cfg.Options.ResyncPeriod = TimeSpan.FromSeconds(10);
 
                         })
-                        .WithController(cfg =>
+                        .WithController((sp, cfg) =>
                         {
                             cfg.Options.Reconciler = Reconciler.Wrap(async (ctx, req) =>
                             {
@@ -54,7 +51,8 @@ namespace AcmeWorkloadOperator
 
                             cfg.Watch<V1Secret>("default", Handlers.ObjectEnqueuer());
                             cfg.Watch<V1Pod>("kube-system", Handlers.ObjectEnqueuer());
-                        });
+                        })
+                        .Add();
                 });
     }
 }

@@ -12,17 +12,17 @@ namespace KubeSharper
 {
     public static class HostingExtensions
     {
-        public static ManagerConfiguration AddKubeSharperManager(this IServiceCollection services, KubernetesClientConfiguration kubeConfig)
+        public static ManagerConfiguration KubeSharperManager(this IServiceCollection services, KubernetesClientConfiguration kubeConfig)
         {
             var mgr = Manager.Create(kubeConfig).ConfigureAwait(false).GetAwaiter().GetResult();
-            services.AddSingleton(mgr);
-            services.AddHostedService(sp => new HostedManager(sp.GetRequiredService<Manager>()));
-            return new ManagerConfiguration(mgr);
+            //services.AddSingleton(mgr);
+            //services.AddHostedService(sp => new HostedManager(sp.GetRequiredService<Manager>()));
+            return new ManagerConfiguration(mgr, services);
         }
-        public static ManagerConfiguration AddKubeSharperManager(this IServiceCollection services, string kubeConfigPath)
+        public static ManagerConfiguration KubeSharperManager(this IServiceCollection services, string kubeConfigPath)
         {
             var config = KubernetesClientConfiguration.BuildConfigFromConfigFile(kubeConfigPath);
-            return AddKubeSharperManager(services, config);
+            return KubeSharperManager(services, config);
         }
         //public static IServiceCollection AddKubeSharperController(this IServiceCollection services, Action<ControllerConfiguration> configurator)
         //{
@@ -61,23 +61,49 @@ namespace KubeSharper
     public class ManagerConfiguration
     {
         private readonly Manager _mgr;
-        public ManagerConfiguration(Manager mgr)
+        private readonly IServiceCollection _services;
+        private readonly List<Action<IServiceProvider, ControllerConfiguration>> _configurators =
+            new List<Action<IServiceProvider, ControllerConfiguration>>();
+        public ManagerConfiguration(Manager mgr, IServiceCollection services)
         {
             _mgr = mgr;
+            _services = services;
         }
 
-        public ManagerConfiguration WithController(Action<ControllerConfiguration> configurator)
+        public ManagerConfiguration WithController(Action<IServiceProvider, ControllerConfiguration> configurator)
         {
-            var config = new ControllerConfiguration(new ControllerOptions());
-            configurator(config);
+            _configurators.Add(configurator);
+            //var config = new ControllerConfiguration(new ControllerOptions());
+            //configurator(config);
 
-            var controller = new Controller(_mgr, config.Options);
-            foreach(var adder in config.WatchAdders)
-            {
-                adder(controller);
-            }
+            //var controller = new Controller(_mgr, config.Options);
+            //foreach(var adder in config.WatchAdders)
+            //{
+            //    adder(controller);
+            //}
             return this;
         } 
+
+        public IServiceCollection Add()
+        {
+            _services.AddHostedService(sp =>
+            {
+                foreach(var configurator in _configurators)
+                {
+                    var config = new ControllerConfiguration(new ControllerOptions());
+                    configurator(sp, config);
+
+                    var controller = new Controller(_mgr, config.Options);
+                    foreach (var adder in config.WatchAdders)
+                    {
+                        adder(controller);
+                    }
+                }
+                return new HostedManager(_mgr);
+
+            });
+            return _services;
+        }
 
     }
 
