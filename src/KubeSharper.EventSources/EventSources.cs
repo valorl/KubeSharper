@@ -50,7 +50,7 @@ namespace KubeSharper.EventSources
             }
 
             var source = new EventSource<CustomResource>(
-                WatchMaker, Lister, cancellationToken);
+                WatchMaker, Lister, ct: cancellationToken);
             return source;
         }
 

@@ -1,16 +1,13 @@
-﻿using k8s;
-using k8s.Models;
+﻿using k8s.Models;
 using KubeSharper.EventQueue;
-using KubeSharper.EventSources;
+using KubeSharper.Reconcilliation;
 using KubeSharper.Utils;
 using Serilog;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace KubeSharper.Reconcilliation
+namespace KubeSharper
 {
     public static class Handlers
     {

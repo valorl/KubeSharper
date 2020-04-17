@@ -1,12 +1,8 @@
 ﻿using k8s;
-using KubeSharper.EventQueue;
-using KubeSharper.Reconcilliation;
 using KubeSharper.Utils;
-using Microsoft.CSharp.RuntimeBinder;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -42,16 +38,16 @@ namespace KubeSharper.EventSources
         internal EventSource(
             WatchMaker watchMaker,
             Lister lister,
-            CancellationToken cancellationToken = default,
-            string objectType = null)
+            string objectType = null,
+            CancellationToken ct = default)
         {
             _watchMaker = watchMaker;
             _lister = lister;
             ObjectType = objectType ?? typeof(T).Name;
 
-            _cts = cancellationToken == CancellationToken.None
+            _cts = ct == CancellationToken.None
                 ? new CancellationTokenSource()
-                : CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                : CancellationTokenSource.CreateLinkedTokenSource(ct);
         }
 
         public async Task Start(EventSourceHandler handler)

@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29905.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KubeSharper", "KubeSharper\KubeSharper.csproj", "{065B072F-13F8-4008-A664-E7E4A1B153B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KubeSharper.Playground", "KubeSharper.Playground\KubeSharper.Playground.csproj", "{065B072F-13F8-4008-A664-E7E4A1B153B9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KubeSharper.Services", "KubeSharper.Services\KubeSharper.Services.csproj", "{65DF40CF-670F-46DF-AEAA-B0B6115728E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KubeSharper", "KubeSharper\KubeSharper.csproj", "{65DF40CF-670F-46DF-AEAA-B0B6115728E5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KubeSharper.EventSources", "KubeSharper.EventSources\KubeSharper.EventSources.csproj", "{541E2514-E004-4CF4-80F6-096F28653CE2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KubeSharper.EventSources", "KubeSharper.EventSources\KubeSharper.EventSources.csproj", "{541E2514-E004-4CF4-80F6-096F28653CE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KubeSharper.EventQueue", "KubeSharper.EventQueue\KubeSharper.EventQueue.csproj", "{41E3FB93-DEB7-4086-B174-D60F8E12B2FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KubeSharper.EventQueue", "KubeSharper.EventQueue\KubeSharper.EventQueue.csproj", "{41E3FB93-DEB7-4086-B174-D60F8E12B2FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KubeSharper.Reconcilliation", "KubeSharper.Reconcilliation\KubeSharper.Reconcilliation.csproj", "{5C9A12DC-B569-4FD3-86AA-A2818475F713}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KubeSharper.Reconcilliation", "KubeSharper.Reconcilliation\KubeSharper.Reconcilliation.csproj", "{5C9A12DC-B569-4FD3-86AA-A2818475F713}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KubeSharper.Utils", "KubeSharper.Kubernetes\KubeSharper.Utils.csproj", "{5D67A265-9D77-402A-B481-39CD41E97A0B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KubeSharper.Utils", "KubeSharper.Kubernetes\KubeSharper.Utils.csproj", "{5D67A265-9D77-402A-B481-39CD41E97A0B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

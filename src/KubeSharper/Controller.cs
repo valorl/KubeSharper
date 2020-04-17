@@ -1,22 +1,18 @@
 ﻿using k8s;
-using k8s.Models;
 using KubeSharper.EventQueue;
 using KubeSharper.EventSources;
 using KubeSharper.Reconcilliation;
 using KubeSharper.Utils;
-using Microsoft.Rest;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static KubeSharper.Reconcilliation.Handlers;
+using static KubeSharper.Handlers;
 
-namespace KubeSharper.Services
+namespace KubeSharper
 {
     public sealed class Controller : IStartable
     {

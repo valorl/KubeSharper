@@ -1,9 +1,7 @@
 ﻿using KubeSharper.Reconcilliation;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace KubeSharper.Services
+namespace KubeSharper
 {
     public class ControllerOptions
     {

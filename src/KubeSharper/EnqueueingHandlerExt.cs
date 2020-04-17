@@ -1,12 +1,9 @@
 ﻿using KubeSharper.EventQueue;
 using KubeSharper.EventSources;
 using KubeSharper.Reconcilliation;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using static KubeSharper.Reconcilliation.Handlers;
+using static KubeSharper.Handlers;
 
-namespace KubeSharper.Services
+namespace KubeSharper
 {
     internal static class EnqueueingHandlerExt
     {

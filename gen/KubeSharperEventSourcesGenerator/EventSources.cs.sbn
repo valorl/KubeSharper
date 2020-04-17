@@ -4,13 +4,12 @@
 ~}}
 using k8s;
 using k8s.Models;
-using KubeSharper.EventQueue;
-using KubeSharper.Reconcilliation;
 using KubeSharper.Utils;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+
 
 namespace KubeSharper.EventSources
 {
@@ -59,7 +58,7 @@ namespace KubeSharper.EventSources
                 return list.Items;
             }
 
-            var source = new EventSource<{{ r.type }}>(WatchMaker, Lister, ct);
+            var source = new EventSource<{{ r.type }}>(WatchMaker, Lister, ct: ct);
             return source;
         }
 {{~ end ~}}

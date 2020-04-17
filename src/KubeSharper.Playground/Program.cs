@@ -1,16 +1,12 @@
 ﻿using k8s;
 using k8s.Models;
-using KubeSharper.EventQueue;
-using KubeSharper.EventSources;
 using KubeSharper.Reconcilliation;
-using KubeSharper.Services;
 using Serilog;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using YamlDotNet.Serialization.NamingConventions;
 
-namespace KubeSharper
+namespace KubeSharper.Playground
 {
     class Program
     {
