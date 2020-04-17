@@ -25,34 +25,22 @@ namespace KubeSharper.EventSources
             else if (t == typeof(V1beta1PodDisruptionBudget)) return (EventSource<T>)(object)V1beta1PodDisruptionBudget(operations, @namespace, cancellationToken);
             else if (t == typeof(V1RoleBinding)) return (EventSource<T>)(object)V1RoleBinding(operations, @namespace, cancellationToken);
             else if (t == typeof(V1Role)) return (EventSource<T>)(object)V1Role(operations, @namespace, cancellationToken);
+            else if (t == typeof(V2beta2HorizontalPodAutoscaler)) return (EventSource<T>)(object)V2beta2HorizontalPodAutoscaler(operations, @namespace, cancellationToken);
+            else if (t == typeof(V1Job)) return (EventSource<T>)(object)V1Job(operations, @namespace, cancellationToken);
             else if (t == typeof(V1beta1CronJob)) return (EventSource<T>)(object)V1beta1CronJob(operations, @namespace, cancellationToken);
             else if (t == typeof(V2alpha1CronJob)) return (EventSource<T>)(object)V2alpha1CronJob(operations, @namespace, cancellationToken);
             else if (t == typeof(V1Lease)) return (EventSource<T>)(object)V1Lease(operations, @namespace, cancellationToken);
             else if (t == typeof(V1beta1Lease)) return (EventSource<T>)(object)V1beta1Lease(operations, @namespace, cancellationToken);
-            else if (t == typeof(V1alpha1EndpointSlice)) return (EventSource<T>)(object)V1alpha1EndpointSlice(operations, @namespace, cancellationToken);
+            else if (t == typeof(V1beta1EndpointSlice)) return (EventSource<T>)(object)V1beta1EndpointSlice(operations, @namespace, cancellationToken);
             else if (t == typeof(V1beta1Event)) return (EventSource<T>)(object)V1beta1Event(operations, @namespace, cancellationToken);
-            else if (t == typeof(V1beta1DaemonSet)) return (EventSource<T>)(object)V1beta1DaemonSet(operations, @namespace, cancellationToken);
-            else if (t == typeof(Extensionsv1beta1Deployment)) return (EventSource<T>)(object)Extensionsv1beta1Deployment(operations, @namespace, cancellationToken);
             else if (t == typeof(Extensionsv1beta1Ingress)) return (EventSource<T>)(object)Extensionsv1beta1Ingress(operations, @namespace, cancellationToken);
-            else if (t == typeof(V1beta1NetworkPolicy)) return (EventSource<T>)(object)V1beta1NetworkPolicy(operations, @namespace, cancellationToken);
-            else if (t == typeof(V1beta1ReplicaSet)) return (EventSource<T>)(object)V1beta1ReplicaSet(operations, @namespace, cancellationToken);
-            else if (t == typeof(V1beta2DaemonSet)) return (EventSource<T>)(object)V1beta2DaemonSet(operations, @namespace, cancellationToken);
-            else if (t == typeof(V1beta2Deployment)) return (EventSource<T>)(object)V1beta2Deployment(operations, @namespace, cancellationToken);
-            else if (t == typeof(V1beta2ReplicaSet)) return (EventSource<T>)(object)V1beta2ReplicaSet(operations, @namespace, cancellationToken);
-            else if (t == typeof(V1beta2StatefulSet)) return (EventSource<T>)(object)V1beta2StatefulSet(operations, @namespace, cancellationToken);
-            else if (t == typeof(V1HorizontalPodAutoscaler)) return (EventSource<T>)(object)V1HorizontalPodAutoscaler(operations, @namespace, cancellationToken);
-            else if (t == typeof(V2beta1HorizontalPodAutoscaler)) return (EventSource<T>)(object)V2beta1HorizontalPodAutoscaler(operations, @namespace, cancellationToken);
-            else if (t == typeof(V2beta2HorizontalPodAutoscaler)) return (EventSource<T>)(object)V2beta2HorizontalPodAutoscaler(operations, @namespace, cancellationToken);
-            else if (t == typeof(V1Job)) return (EventSource<T>)(object)V1Job(operations, @namespace, cancellationToken);
             else if (t == typeof(V1ControllerRevision)) return (EventSource<T>)(object)V1ControllerRevision(operations, @namespace, cancellationToken);
             else if (t == typeof(V1DaemonSet)) return (EventSource<T>)(object)V1DaemonSet(operations, @namespace, cancellationToken);
             else if (t == typeof(V1Deployment)) return (EventSource<T>)(object)V1Deployment(operations, @namespace, cancellationToken);
             else if (t == typeof(V1ReplicaSet)) return (EventSource<T>)(object)V1ReplicaSet(operations, @namespace, cancellationToken);
             else if (t == typeof(V1StatefulSet)) return (EventSource<T>)(object)V1StatefulSet(operations, @namespace, cancellationToken);
-            else if (t == typeof(V1beta1ControllerRevision)) return (EventSource<T>)(object)V1beta1ControllerRevision(operations, @namespace, cancellationToken);
-            else if (t == typeof(Appsv1beta1Deployment)) return (EventSource<T>)(object)Appsv1beta1Deployment(operations, @namespace, cancellationToken);
-            else if (t == typeof(V1beta1StatefulSet)) return (EventSource<T>)(object)V1beta1StatefulSet(operations, @namespace, cancellationToken);
-            else if (t == typeof(V1beta2ControllerRevision)) return (EventSource<T>)(object)V1beta2ControllerRevision(operations, @namespace, cancellationToken);
+            else if (t == typeof(V1HorizontalPodAutoscaler)) return (EventSource<T>)(object)V1HorizontalPodAutoscaler(operations, @namespace, cancellationToken);
+            else if (t == typeof(V2beta1HorizontalPodAutoscaler)) return (EventSource<T>)(object)V2beta1HorizontalPodAutoscaler(operations, @namespace, cancellationToken);
             else if (t == typeof(V1Service)) return (EventSource<T>)(object)V1Service(operations, @namespace, cancellationToken);
             else if (t == typeof(V1ConfigMap)) return (EventSource<T>)(object)V1ConfigMap(operations, @namespace, cancellationToken);
             else if (t == typeof(V1Endpoints)) return (EventSource<T>)(object)V1Endpoints(operations, @namespace, cancellationToken);
@@ -243,7 +231,7 @@ namespace KubeSharper.EventSources
         {
             async Task<Watcher<V1NetworkPolicy>> WatchMaker(EventSourceHandler onEvent)
             {
-                var list = await operations.ListNamespacedNetworkPolicy1WithHttpMessagesAsync(@namespace, watch: true);
+                var list = await operations.ListNamespacedNetworkPolicyWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1NetworkPolicy obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -259,7 +247,7 @@ namespace KubeSharper.EventSources
 
             async Task<IList<V1NetworkPolicy>> Lister()
             {
-                var list = await operations.ListNamespacedNetworkPolicy1Async(@namespace);
+                var list = await operations.ListNamespacedNetworkPolicyAsync(@namespace);
                 var kind = list.Kind.Replace("List", "");
                 foreach (var i in list.Items)
                 {
@@ -409,6 +397,74 @@ namespace KubeSharper.EventSources
             return source;
         }
 
+        private EventSource<V2beta2HorizontalPodAutoscaler> V2beta2HorizontalPodAutoscaler(IKubernetes operations, string @namespace, CancellationToken ct)
+        {
+            async Task<Watcher<V2beta2HorizontalPodAutoscaler>> WatchMaker(EventSourceHandler onEvent)
+            {
+                var list = await operations.ListNamespacedHorizontalPodAutoscaler2WithHttpMessagesAsync(@namespace, watch: true);
+                var watch = list.Watch(async (WatchEventType et, V2beta2HorizontalPodAutoscaler obj) =>
+                {
+                    var metaObj = new KubernetesV1MetaObject
+                    {
+                        ApiVersion = obj.ApiVersion,
+                        Kind = obj.Kind,
+                        Metadata = obj.Metadata
+                    };
+                    await onEvent(et.ToInternal(), metaObj); 
+                }, OnError<V2beta2HorizontalPodAutoscaler>, OnClose<V2beta2HorizontalPodAutoscaler>);
+                return watch;
+            }
+
+            async Task<IList<V2beta2HorizontalPodAutoscaler>> Lister()
+            {
+                var list = await operations.ListNamespacedHorizontalPodAutoscaler2Async(@namespace);
+                var kind = list.Kind.Replace("List", "");
+                foreach (var i in list.Items)
+                {
+                    i.ApiVersion = list.ApiVersion;
+                    i.Kind = kind;
+                }
+                return list.Items;
+            }
+
+            var source = new EventSource<V2beta2HorizontalPodAutoscaler>(WatchMaker, Lister, ct: ct);
+            return source;
+        }
+
+        private EventSource<V1Job> V1Job(IKubernetes operations, string @namespace, CancellationToken ct)
+        {
+            async Task<Watcher<V1Job>> WatchMaker(EventSourceHandler onEvent)
+            {
+                var list = await operations.ListNamespacedJobWithHttpMessagesAsync(@namespace, watch: true);
+                var watch = list.Watch(async (WatchEventType et, V1Job obj) =>
+                {
+                    var metaObj = new KubernetesV1MetaObject
+                    {
+                        ApiVersion = obj.ApiVersion,
+                        Kind = obj.Kind,
+                        Metadata = obj.Metadata
+                    };
+                    await onEvent(et.ToInternal(), metaObj); 
+                }, OnError<V1Job>, OnClose<V1Job>);
+                return watch;
+            }
+
+            async Task<IList<V1Job>> Lister()
+            {
+                var list = await operations.ListNamespacedJobAsync(@namespace);
+                var kind = list.Kind.Replace("List", "");
+                foreach (var i in list.Items)
+                {
+                    i.ApiVersion = list.ApiVersion;
+                    i.Kind = kind;
+                }
+                return list.Items;
+            }
+
+            var source = new EventSource<V1Job>(WatchMaker, Lister, ct: ct);
+            return source;
+        }
+
         private EventSource<V1beta1CronJob> V1beta1CronJob(IKubernetes operations, string @namespace, CancellationToken ct)
         {
             async Task<Watcher<V1beta1CronJob>> WatchMaker(EventSourceHandler onEvent)
@@ -545,12 +601,12 @@ namespace KubeSharper.EventSources
             return source;
         }
 
-        private EventSource<V1alpha1EndpointSlice> V1alpha1EndpointSlice(IKubernetes operations, string @namespace, CancellationToken ct)
+        private EventSource<V1beta1EndpointSlice> V1beta1EndpointSlice(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1alpha1EndpointSlice>> WatchMaker(EventSourceHandler onEvent)
+            async Task<Watcher<V1beta1EndpointSlice>> WatchMaker(EventSourceHandler onEvent)
             {
                 var list = await operations.ListNamespacedEndpointSliceWithHttpMessagesAsync(@namespace, watch: true);
-                var watch = list.Watch(async (WatchEventType et, V1alpha1EndpointSlice obj) =>
+                var watch = list.Watch(async (WatchEventType et, V1beta1EndpointSlice obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
                     {
@@ -559,11 +615,11 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1alpha1EndpointSlice>, OnClose<V1alpha1EndpointSlice>);
+                }, OnError<V1beta1EndpointSlice>, OnClose<V1beta1EndpointSlice>);
                 return watch;
             }
 
-            async Task<IList<V1alpha1EndpointSlice>> Lister()
+            async Task<IList<V1beta1EndpointSlice>> Lister()
             {
                 var list = await operations.ListNamespacedEndpointSliceAsync(@namespace);
                 var kind = list.Kind.Replace("List", "");
@@ -575,7 +631,7 @@ namespace KubeSharper.EventSources
                 return list.Items;
             }
 
-            var source = new EventSource<V1alpha1EndpointSlice>(WatchMaker, Lister, ct: ct);
+            var source = new EventSource<V1beta1EndpointSlice>(WatchMaker, Lister, ct: ct);
             return source;
         }
 
@@ -613,74 +669,6 @@ namespace KubeSharper.EventSources
             return source;
         }
 
-        private EventSource<V1beta1DaemonSet> V1beta1DaemonSet(IKubernetes operations, string @namespace, CancellationToken ct)
-        {
-            async Task<Watcher<V1beta1DaemonSet>> WatchMaker(EventSourceHandler onEvent)
-            {
-                var list = await operations.ListNamespacedDaemonSet2WithHttpMessagesAsync(@namespace, watch: true);
-                var watch = list.Watch(async (WatchEventType et, V1beta1DaemonSet obj) =>
-                {
-                    var metaObj = new KubernetesV1MetaObject
-                    {
-                        ApiVersion = obj.ApiVersion,
-                        Kind = obj.Kind,
-                        Metadata = obj.Metadata
-                    };
-                    await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1beta1DaemonSet>, OnClose<V1beta1DaemonSet>);
-                return watch;
-            }
-
-            async Task<IList<V1beta1DaemonSet>> Lister()
-            {
-                var list = await operations.ListNamespacedDaemonSet2Async(@namespace);
-                var kind = list.Kind.Replace("List", "");
-                foreach (var i in list.Items)
-                {
-                    i.ApiVersion = list.ApiVersion;
-                    i.Kind = kind;
-                }
-                return list.Items;
-            }
-
-            var source = new EventSource<V1beta1DaemonSet>(WatchMaker, Lister, ct: ct);
-            return source;
-        }
-
-        private EventSource<Extensionsv1beta1Deployment> Extensionsv1beta1Deployment(IKubernetes operations, string @namespace, CancellationToken ct)
-        {
-            async Task<Watcher<Extensionsv1beta1Deployment>> WatchMaker(EventSourceHandler onEvent)
-            {
-                var list = await operations.ListNamespacedDeployment3WithHttpMessagesAsync(@namespace, watch: true);
-                var watch = list.Watch(async (WatchEventType et, Extensionsv1beta1Deployment obj) =>
-                {
-                    var metaObj = new KubernetesV1MetaObject
-                    {
-                        ApiVersion = obj.ApiVersion,
-                        Kind = obj.Kind,
-                        Metadata = obj.Metadata
-                    };
-                    await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<Extensionsv1beta1Deployment>, OnClose<Extensionsv1beta1Deployment>);
-                return watch;
-            }
-
-            async Task<IList<Extensionsv1beta1Deployment>> Lister()
-            {
-                var list = await operations.ListNamespacedDeployment3Async(@namespace);
-                var kind = list.Kind.Replace("List", "");
-                foreach (var i in list.Items)
-                {
-                    i.ApiVersion = list.ApiVersion;
-                    i.Kind = kind;
-                }
-                return list.Items;
-            }
-
-            var source = new EventSource<Extensionsv1beta1Deployment>(WatchMaker, Lister, ct: ct);
-            return source;
-        }
-
         private EventSource<Extensionsv1beta1Ingress> Extensionsv1beta1Ingress(IKubernetes operations, string @namespace, CancellationToken ct)
         {
             async Task<Watcher<Extensionsv1beta1Ingress>> WatchMaker(EventSourceHandler onEvent)
@@ -712,346 +700,6 @@ namespace KubeSharper.EventSources
             }
 
             var source = new EventSource<Extensionsv1beta1Ingress>(WatchMaker, Lister, ct: ct);
-            return source;
-        }
-
-        private EventSource<V1beta1NetworkPolicy> V1beta1NetworkPolicy(IKubernetes operations, string @namespace, CancellationToken ct)
-        {
-            async Task<Watcher<V1beta1NetworkPolicy>> WatchMaker(EventSourceHandler onEvent)
-            {
-                var list = await operations.ListNamespacedNetworkPolicyWithHttpMessagesAsync(@namespace, watch: true);
-                var watch = list.Watch(async (WatchEventType et, V1beta1NetworkPolicy obj) =>
-                {
-                    var metaObj = new KubernetesV1MetaObject
-                    {
-                        ApiVersion = obj.ApiVersion,
-                        Kind = obj.Kind,
-                        Metadata = obj.Metadata
-                    };
-                    await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1beta1NetworkPolicy>, OnClose<V1beta1NetworkPolicy>);
-                return watch;
-            }
-
-            async Task<IList<V1beta1NetworkPolicy>> Lister()
-            {
-                var list = await operations.ListNamespacedNetworkPolicyAsync(@namespace);
-                var kind = list.Kind.Replace("List", "");
-                foreach (var i in list.Items)
-                {
-                    i.ApiVersion = list.ApiVersion;
-                    i.Kind = kind;
-                }
-                return list.Items;
-            }
-
-            var source = new EventSource<V1beta1NetworkPolicy>(WatchMaker, Lister, ct: ct);
-            return source;
-        }
-
-        private EventSource<V1beta1ReplicaSet> V1beta1ReplicaSet(IKubernetes operations, string @namespace, CancellationToken ct)
-        {
-            async Task<Watcher<V1beta1ReplicaSet>> WatchMaker(EventSourceHandler onEvent)
-            {
-                var list = await operations.ListNamespacedReplicaSet2WithHttpMessagesAsync(@namespace, watch: true);
-                var watch = list.Watch(async (WatchEventType et, V1beta1ReplicaSet obj) =>
-                {
-                    var metaObj = new KubernetesV1MetaObject
-                    {
-                        ApiVersion = obj.ApiVersion,
-                        Kind = obj.Kind,
-                        Metadata = obj.Metadata
-                    };
-                    await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1beta1ReplicaSet>, OnClose<V1beta1ReplicaSet>);
-                return watch;
-            }
-
-            async Task<IList<V1beta1ReplicaSet>> Lister()
-            {
-                var list = await operations.ListNamespacedReplicaSet2Async(@namespace);
-                var kind = list.Kind.Replace("List", "");
-                foreach (var i in list.Items)
-                {
-                    i.ApiVersion = list.ApiVersion;
-                    i.Kind = kind;
-                }
-                return list.Items;
-            }
-
-            var source = new EventSource<V1beta1ReplicaSet>(WatchMaker, Lister, ct: ct);
-            return source;
-        }
-
-        private EventSource<V1beta2DaemonSet> V1beta2DaemonSet(IKubernetes operations, string @namespace, CancellationToken ct)
-        {
-            async Task<Watcher<V1beta2DaemonSet>> WatchMaker(EventSourceHandler onEvent)
-            {
-                var list = await operations.ListNamespacedDaemonSet1WithHttpMessagesAsync(@namespace, watch: true);
-                var watch = list.Watch(async (WatchEventType et, V1beta2DaemonSet obj) =>
-                {
-                    var metaObj = new KubernetesV1MetaObject
-                    {
-                        ApiVersion = obj.ApiVersion,
-                        Kind = obj.Kind,
-                        Metadata = obj.Metadata
-                    };
-                    await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1beta2DaemonSet>, OnClose<V1beta2DaemonSet>);
-                return watch;
-            }
-
-            async Task<IList<V1beta2DaemonSet>> Lister()
-            {
-                var list = await operations.ListNamespacedDaemonSet1Async(@namespace);
-                var kind = list.Kind.Replace("List", "");
-                foreach (var i in list.Items)
-                {
-                    i.ApiVersion = list.ApiVersion;
-                    i.Kind = kind;
-                }
-                return list.Items;
-            }
-
-            var source = new EventSource<V1beta2DaemonSet>(WatchMaker, Lister, ct: ct);
-            return source;
-        }
-
-        private EventSource<V1beta2Deployment> V1beta2Deployment(IKubernetes operations, string @namespace, CancellationToken ct)
-        {
-            async Task<Watcher<V1beta2Deployment>> WatchMaker(EventSourceHandler onEvent)
-            {
-                var list = await operations.ListNamespacedDeployment2WithHttpMessagesAsync(@namespace, watch: true);
-                var watch = list.Watch(async (WatchEventType et, V1beta2Deployment obj) =>
-                {
-                    var metaObj = new KubernetesV1MetaObject
-                    {
-                        ApiVersion = obj.ApiVersion,
-                        Kind = obj.Kind,
-                        Metadata = obj.Metadata
-                    };
-                    await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1beta2Deployment>, OnClose<V1beta2Deployment>);
-                return watch;
-            }
-
-            async Task<IList<V1beta2Deployment>> Lister()
-            {
-                var list = await operations.ListNamespacedDeployment2Async(@namespace);
-                var kind = list.Kind.Replace("List", "");
-                foreach (var i in list.Items)
-                {
-                    i.ApiVersion = list.ApiVersion;
-                    i.Kind = kind;
-                }
-                return list.Items;
-            }
-
-            var source = new EventSource<V1beta2Deployment>(WatchMaker, Lister, ct: ct);
-            return source;
-        }
-
-        private EventSource<V1beta2ReplicaSet> V1beta2ReplicaSet(IKubernetes operations, string @namespace, CancellationToken ct)
-        {
-            async Task<Watcher<V1beta2ReplicaSet>> WatchMaker(EventSourceHandler onEvent)
-            {
-                var list = await operations.ListNamespacedReplicaSet1WithHttpMessagesAsync(@namespace, watch: true);
-                var watch = list.Watch(async (WatchEventType et, V1beta2ReplicaSet obj) =>
-                {
-                    var metaObj = new KubernetesV1MetaObject
-                    {
-                        ApiVersion = obj.ApiVersion,
-                        Kind = obj.Kind,
-                        Metadata = obj.Metadata
-                    };
-                    await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1beta2ReplicaSet>, OnClose<V1beta2ReplicaSet>);
-                return watch;
-            }
-
-            async Task<IList<V1beta2ReplicaSet>> Lister()
-            {
-                var list = await operations.ListNamespacedReplicaSet1Async(@namespace);
-                var kind = list.Kind.Replace("List", "");
-                foreach (var i in list.Items)
-                {
-                    i.ApiVersion = list.ApiVersion;
-                    i.Kind = kind;
-                }
-                return list.Items;
-            }
-
-            var source = new EventSource<V1beta2ReplicaSet>(WatchMaker, Lister, ct: ct);
-            return source;
-        }
-
-        private EventSource<V1beta2StatefulSet> V1beta2StatefulSet(IKubernetes operations, string @namespace, CancellationToken ct)
-        {
-            async Task<Watcher<V1beta2StatefulSet>> WatchMaker(EventSourceHandler onEvent)
-            {
-                var list = await operations.ListNamespacedStatefulSet2WithHttpMessagesAsync(@namespace, watch: true);
-                var watch = list.Watch(async (WatchEventType et, V1beta2StatefulSet obj) =>
-                {
-                    var metaObj = new KubernetesV1MetaObject
-                    {
-                        ApiVersion = obj.ApiVersion,
-                        Kind = obj.Kind,
-                        Metadata = obj.Metadata
-                    };
-                    await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1beta2StatefulSet>, OnClose<V1beta2StatefulSet>);
-                return watch;
-            }
-
-            async Task<IList<V1beta2StatefulSet>> Lister()
-            {
-                var list = await operations.ListNamespacedStatefulSet2Async(@namespace);
-                var kind = list.Kind.Replace("List", "");
-                foreach (var i in list.Items)
-                {
-                    i.ApiVersion = list.ApiVersion;
-                    i.Kind = kind;
-                }
-                return list.Items;
-            }
-
-            var source = new EventSource<V1beta2StatefulSet>(WatchMaker, Lister, ct: ct);
-            return source;
-        }
-
-        private EventSource<V1HorizontalPodAutoscaler> V1HorizontalPodAutoscaler(IKubernetes operations, string @namespace, CancellationToken ct)
-        {
-            async Task<Watcher<V1HorizontalPodAutoscaler>> WatchMaker(EventSourceHandler onEvent)
-            {
-                var list = await operations.ListNamespacedHorizontalPodAutoscalerWithHttpMessagesAsync(@namespace, watch: true);
-                var watch = list.Watch(async (WatchEventType et, V1HorizontalPodAutoscaler obj) =>
-                {
-                    var metaObj = new KubernetesV1MetaObject
-                    {
-                        ApiVersion = obj.ApiVersion,
-                        Kind = obj.Kind,
-                        Metadata = obj.Metadata
-                    };
-                    await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1HorizontalPodAutoscaler>, OnClose<V1HorizontalPodAutoscaler>);
-                return watch;
-            }
-
-            async Task<IList<V1HorizontalPodAutoscaler>> Lister()
-            {
-                var list = await operations.ListNamespacedHorizontalPodAutoscalerAsync(@namespace);
-                var kind = list.Kind.Replace("List", "");
-                foreach (var i in list.Items)
-                {
-                    i.ApiVersion = list.ApiVersion;
-                    i.Kind = kind;
-                }
-                return list.Items;
-            }
-
-            var source = new EventSource<V1HorizontalPodAutoscaler>(WatchMaker, Lister, ct: ct);
-            return source;
-        }
-
-        private EventSource<V2beta1HorizontalPodAutoscaler> V2beta1HorizontalPodAutoscaler(IKubernetes operations, string @namespace, CancellationToken ct)
-        {
-            async Task<Watcher<V2beta1HorizontalPodAutoscaler>> WatchMaker(EventSourceHandler onEvent)
-            {
-                var list = await operations.ListNamespacedHorizontalPodAutoscaler1WithHttpMessagesAsync(@namespace, watch: true);
-                var watch = list.Watch(async (WatchEventType et, V2beta1HorizontalPodAutoscaler obj) =>
-                {
-                    var metaObj = new KubernetesV1MetaObject
-                    {
-                        ApiVersion = obj.ApiVersion,
-                        Kind = obj.Kind,
-                        Metadata = obj.Metadata
-                    };
-                    await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V2beta1HorizontalPodAutoscaler>, OnClose<V2beta1HorizontalPodAutoscaler>);
-                return watch;
-            }
-
-            async Task<IList<V2beta1HorizontalPodAutoscaler>> Lister()
-            {
-                var list = await operations.ListNamespacedHorizontalPodAutoscaler1Async(@namespace);
-                var kind = list.Kind.Replace("List", "");
-                foreach (var i in list.Items)
-                {
-                    i.ApiVersion = list.ApiVersion;
-                    i.Kind = kind;
-                }
-                return list.Items;
-            }
-
-            var source = new EventSource<V2beta1HorizontalPodAutoscaler>(WatchMaker, Lister, ct: ct);
-            return source;
-        }
-
-        private EventSource<V2beta2HorizontalPodAutoscaler> V2beta2HorizontalPodAutoscaler(IKubernetes operations, string @namespace, CancellationToken ct)
-        {
-            async Task<Watcher<V2beta2HorizontalPodAutoscaler>> WatchMaker(EventSourceHandler onEvent)
-            {
-                var list = await operations.ListNamespacedHorizontalPodAutoscaler2WithHttpMessagesAsync(@namespace, watch: true);
-                var watch = list.Watch(async (WatchEventType et, V2beta2HorizontalPodAutoscaler obj) =>
-                {
-                    var metaObj = new KubernetesV1MetaObject
-                    {
-                        ApiVersion = obj.ApiVersion,
-                        Kind = obj.Kind,
-                        Metadata = obj.Metadata
-                    };
-                    await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V2beta2HorizontalPodAutoscaler>, OnClose<V2beta2HorizontalPodAutoscaler>);
-                return watch;
-            }
-
-            async Task<IList<V2beta2HorizontalPodAutoscaler>> Lister()
-            {
-                var list = await operations.ListNamespacedHorizontalPodAutoscaler2Async(@namespace);
-                var kind = list.Kind.Replace("List", "");
-                foreach (var i in list.Items)
-                {
-                    i.ApiVersion = list.ApiVersion;
-                    i.Kind = kind;
-                }
-                return list.Items;
-            }
-
-            var source = new EventSource<V2beta2HorizontalPodAutoscaler>(WatchMaker, Lister, ct: ct);
-            return source;
-        }
-
-        private EventSource<V1Job> V1Job(IKubernetes operations, string @namespace, CancellationToken ct)
-        {
-            async Task<Watcher<V1Job>> WatchMaker(EventSourceHandler onEvent)
-            {
-                var list = await operations.ListNamespacedJobWithHttpMessagesAsync(@namespace, watch: true);
-                var watch = list.Watch(async (WatchEventType et, V1Job obj) =>
-                {
-                    var metaObj = new KubernetesV1MetaObject
-                    {
-                        ApiVersion = obj.ApiVersion,
-                        Kind = obj.Kind,
-                        Metadata = obj.Metadata
-                    };
-                    await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1Job>, OnClose<V1Job>);
-                return watch;
-            }
-
-            async Task<IList<V1Job>> Lister()
-            {
-                var list = await operations.ListNamespacedJobAsync(@namespace);
-                var kind = list.Kind.Replace("List", "");
-                foreach (var i in list.Items)
-                {
-                    i.ApiVersion = list.ApiVersion;
-                    i.Kind = kind;
-                }
-                return list.Items;
-            }
-
-            var source = new EventSource<V1Job>(WatchMaker, Lister, ct: ct);
             return source;
         }
 
@@ -1225,12 +873,12 @@ namespace KubeSharper.EventSources
             return source;
         }
 
-        private EventSource<V1beta1ControllerRevision> V1beta1ControllerRevision(IKubernetes operations, string @namespace, CancellationToken ct)
+        private EventSource<V1HorizontalPodAutoscaler> V1HorizontalPodAutoscaler(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1beta1ControllerRevision>> WatchMaker(EventSourceHandler onEvent)
+            async Task<Watcher<V1HorizontalPodAutoscaler>> WatchMaker(EventSourceHandler onEvent)
             {
-                var list = await operations.ListNamespacedControllerRevision1WithHttpMessagesAsync(@namespace, watch: true);
-                var watch = list.Watch(async (WatchEventType et, V1beta1ControllerRevision obj) =>
+                var list = await operations.ListNamespacedHorizontalPodAutoscalerWithHttpMessagesAsync(@namespace, watch: true);
+                var watch = list.Watch(async (WatchEventType et, V1HorizontalPodAutoscaler obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
                     {
@@ -1239,13 +887,13 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1beta1ControllerRevision>, OnClose<V1beta1ControllerRevision>);
+                }, OnError<V1HorizontalPodAutoscaler>, OnClose<V1HorizontalPodAutoscaler>);
                 return watch;
             }
 
-            async Task<IList<V1beta1ControllerRevision>> Lister()
+            async Task<IList<V1HorizontalPodAutoscaler>> Lister()
             {
-                var list = await operations.ListNamespacedControllerRevision1Async(@namespace);
+                var list = await operations.ListNamespacedHorizontalPodAutoscalerAsync(@namespace);
                 var kind = list.Kind.Replace("List", "");
                 foreach (var i in list.Items)
                 {
@@ -1255,16 +903,16 @@ namespace KubeSharper.EventSources
                 return list.Items;
             }
 
-            var source = new EventSource<V1beta1ControllerRevision>(WatchMaker, Lister, ct: ct);
+            var source = new EventSource<V1HorizontalPodAutoscaler>(WatchMaker, Lister, ct: ct);
             return source;
         }
 
-        private EventSource<Appsv1beta1Deployment> Appsv1beta1Deployment(IKubernetes operations, string @namespace, CancellationToken ct)
+        private EventSource<V2beta1HorizontalPodAutoscaler> V2beta1HorizontalPodAutoscaler(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<Appsv1beta1Deployment>> WatchMaker(EventSourceHandler onEvent)
+            async Task<Watcher<V2beta1HorizontalPodAutoscaler>> WatchMaker(EventSourceHandler onEvent)
             {
-                var list = await operations.ListNamespacedDeployment1WithHttpMessagesAsync(@namespace, watch: true);
-                var watch = list.Watch(async (WatchEventType et, Appsv1beta1Deployment obj) =>
+                var list = await operations.ListNamespacedHorizontalPodAutoscaler1WithHttpMessagesAsync(@namespace, watch: true);
+                var watch = list.Watch(async (WatchEventType et, V2beta1HorizontalPodAutoscaler obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
                     {
@@ -1273,13 +921,13 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<Appsv1beta1Deployment>, OnClose<Appsv1beta1Deployment>);
+                }, OnError<V2beta1HorizontalPodAutoscaler>, OnClose<V2beta1HorizontalPodAutoscaler>);
                 return watch;
             }
 
-            async Task<IList<Appsv1beta1Deployment>> Lister()
+            async Task<IList<V2beta1HorizontalPodAutoscaler>> Lister()
             {
-                var list = await operations.ListNamespacedDeployment1Async(@namespace);
+                var list = await operations.ListNamespacedHorizontalPodAutoscaler1Async(@namespace);
                 var kind = list.Kind.Replace("List", "");
                 foreach (var i in list.Items)
                 {
@@ -1289,75 +937,7 @@ namespace KubeSharper.EventSources
                 return list.Items;
             }
 
-            var source = new EventSource<Appsv1beta1Deployment>(WatchMaker, Lister, ct: ct);
-            return source;
-        }
-
-        private EventSource<V1beta1StatefulSet> V1beta1StatefulSet(IKubernetes operations, string @namespace, CancellationToken ct)
-        {
-            async Task<Watcher<V1beta1StatefulSet>> WatchMaker(EventSourceHandler onEvent)
-            {
-                var list = await operations.ListNamespacedStatefulSet1WithHttpMessagesAsync(@namespace, watch: true);
-                var watch = list.Watch(async (WatchEventType et, V1beta1StatefulSet obj) =>
-                {
-                    var metaObj = new KubernetesV1MetaObject
-                    {
-                        ApiVersion = obj.ApiVersion,
-                        Kind = obj.Kind,
-                        Metadata = obj.Metadata
-                    };
-                    await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1beta1StatefulSet>, OnClose<V1beta1StatefulSet>);
-                return watch;
-            }
-
-            async Task<IList<V1beta1StatefulSet>> Lister()
-            {
-                var list = await operations.ListNamespacedStatefulSet1Async(@namespace);
-                var kind = list.Kind.Replace("List", "");
-                foreach (var i in list.Items)
-                {
-                    i.ApiVersion = list.ApiVersion;
-                    i.Kind = kind;
-                }
-                return list.Items;
-            }
-
-            var source = new EventSource<V1beta1StatefulSet>(WatchMaker, Lister, ct: ct);
-            return source;
-        }
-
-        private EventSource<V1beta2ControllerRevision> V1beta2ControllerRevision(IKubernetes operations, string @namespace, CancellationToken ct)
-        {
-            async Task<Watcher<V1beta2ControllerRevision>> WatchMaker(EventSourceHandler onEvent)
-            {
-                var list = await operations.ListNamespacedControllerRevision2WithHttpMessagesAsync(@namespace, watch: true);
-                var watch = list.Watch(async (WatchEventType et, V1beta2ControllerRevision obj) =>
-                {
-                    var metaObj = new KubernetesV1MetaObject
-                    {
-                        ApiVersion = obj.ApiVersion,
-                        Kind = obj.Kind,
-                        Metadata = obj.Metadata
-                    };
-                    await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1beta2ControllerRevision>, OnClose<V1beta2ControllerRevision>);
-                return watch;
-            }
-
-            async Task<IList<V1beta2ControllerRevision>> Lister()
-            {
-                var list = await operations.ListNamespacedControllerRevision2Async(@namespace);
-                var kind = list.Kind.Replace("List", "");
-                foreach (var i in list.Items)
-                {
-                    i.ApiVersion = list.ApiVersion;
-                    i.Kind = kind;
-                }
-                return list.Items;
-            }
-
-            var source = new EventSource<V1beta2ControllerRevision>(WatchMaker, Lister, ct: ct);
+            var source = new EventSource<V2beta1HorizontalPodAutoscaler>(WatchMaker, Lister, ct: ct);
             return source;
         }
 

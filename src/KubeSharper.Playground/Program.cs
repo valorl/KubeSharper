@@ -25,7 +25,7 @@ namespace KubeSharper.Playground
 
             var secrets = await client.ListNamespacedSecretWithHttpMessagesAsync("default");
 
-            var manager = await Manager.Create(config);
+            var manager = await Manager.Create(configFile);
 
             var controller = new Controller(manager, new ControllerOptions
             {

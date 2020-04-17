@@ -1,15 +1,17 @@
 ﻿using k8s;
 using KubeSharper.EventSources;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace KubeSharper
 {
-    public class Manager : IDisposable
+    public class Manager
     {
         public IKubernetes Client { get;}
         internal IEventSourceCache Cache { get; }
@@ -18,12 +20,18 @@ namespace KubeSharper
 
         private readonly List<IStartable> _startables = new List<IStartable>();
 
-        public static async Task<Manager> Create(KubernetesClientConfiguration kubeConfig)
+        internal static async Task<Manager> Create(KubernetesClientConfiguration kubeConfig)
         {
             var sources = new EventSources.EventSources();
             var client = new Kubernetes(kubeConfig);
             var cache = new EventSourceCache(sources, client);
-            return new Manager(client, cache);
+            return await Task.FromResult(new Manager(client, cache));
+        }
+        public static async Task<Manager> Create(string kubeConfigPath)
+        {
+            var fi = new FileInfo(kubeConfigPath);
+            var config = await KubernetesClientConfiguration.BuildConfigFromConfigFileAsync(fi);
+            return await Create(config);
         }
         internal Manager(IKubernetes client, IEventSourceCache cache)
         {
@@ -66,10 +74,17 @@ namespace KubeSharper
 
         public void Dispose()
         {
+            Cache.Dispose();
             foreach (var s in _startables)
             {
                 s.Dispose();
             }
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            Log.Debug("Manager is stopping.");
+            return Task.CompletedTask;
         }
     }
 }

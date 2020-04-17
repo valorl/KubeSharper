@@ -25,8 +25,6 @@ namespace KubeSharper.EventSources
             _client = client;
         }
 
-
-
         public ISharedEventSource GetNamespacedFor<T>(string @namespace)
         {
             ISharedEventSource source;
