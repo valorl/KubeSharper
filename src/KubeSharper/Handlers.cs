@@ -12,7 +12,7 @@ namespace KubeSharper
     public static class Handlers
     {
         public delegate Task EnqueueingHandler(EventType et, KubernetesV1MetaObject obj, IEventQueue<ReconcileRequest> queue);
-        public static EnqueueingHandler ObjectEnqueuer()
+        public static EnqueueingHandler EnqueueForObject()
         {
             return LogException(async (et, obj, q) =>
             {
@@ -21,20 +21,26 @@ namespace KubeSharper
             });
         }
 
-        public static EnqueueingHandler OwnerEnqueuer(OwnerInfo info)
+        public static EnqueueingHandler EnqueueForOwner(bool isController)
         {
             return LogException(async (et, obj, q) =>
             {
-                var requests = info.IsController switch
+                var ownerReferences = obj.Metadata.OwnerReferences;
+                if (ownerReferences == null || ownerReferences.Count == 0)
+                {
+                    Log.Debug($"Skipping no owner reference: {obj.ApiVersion}/{obj.Metadata.NamespaceProperty}/{obj.Kind}/{obj.Metadata.Name}");
+                    return;
+                }
+
+                var requests = isController switch
                 {
                     true =>
-                        obj.Metadata.OwnerReferences
+                        ownerReferences
                         .Where(r => r.Controller.HasValue && r.Controller == true)
                         .Select(r => MakeRequest(obj, r)),
 
                     false =>
-                        obj.Metadata.OwnerReferences
-                        .Select(r => MakeRequest(obj, r))
+                        ownerReferences.Select(r => MakeRequest(obj, r))
                 };
                 foreach (var r in requests)
                 {

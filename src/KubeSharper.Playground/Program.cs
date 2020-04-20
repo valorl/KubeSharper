@@ -37,8 +37,8 @@ namespace KubeSharper.Playground
                 })
             }); ;
 
-            controller.AddWatch<V1Secret>("default", Handlers.ObjectEnqueuer());
-            controller.AddWatch<V1Pod>("kube-system", Handlers.ObjectEnqueuer());
+            controller.AddWatch<V1Secret>("default", Handlers.EnqueueForObject());
+            controller.AddWatch<V1Pod>("kube-system", Handlers.EnqueueForObject());
 
             //await controller.Start(cts.Token);
 

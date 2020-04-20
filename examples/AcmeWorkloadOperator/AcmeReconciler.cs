@@ -11,7 +11,7 @@ namespace AcmeWorkloadOperator
     {
         public async Task<ReconcileResult> Reconcile(ReconcileContext context, ReconcileRequest request)
         {
-            Log.Information($"{nameof(AcmeReconciler)} is totally reconiling right now...");
+            Log.Information($"[{nameof(AcmeReconciler)}] Request received for {request}");
             return await Task.FromResult(new ReconcileResult());
         }
     }

@@ -34,24 +34,31 @@ namespace AcmeWorkloadOperator
                     services.KubeSharperManager(@"C:\Users\vao\kubeconfig.yaml")
                         .WithController((sp, cfg) =>
                         {
-                            cfg.Watch<V1Secret>("default", Handlers.ObjectEnqueuer());
-                            cfg.Watch<V1Pod>("kube-system", Handlers.ObjectEnqueuer());
+                            var ns = "default";
+                            cfg.Watch<V1Secret>(ns, Handlers.EnqueueForOwner(isController: true));
+                            cfg.Watch<V1ConfigMap>(ns, Handlers.EnqueueForOwner(isController: true));
+                            cfg.Watch<V1Deployment>(ns, Handlers.EnqueueForOwner(isController: true));
+                            cfg.Watch<V1beta1CronJob>(ns, Handlers.EnqueueForOwner(isController: true));
+                            cfg.Watch<V1Service>(ns, Handlers.EnqueueForOwner(isController: true));
+                            cfg.Watch<Networkingv1beta1Ingress>(ns, Handlers.EnqueueForOwner(isController: true));
+
+                            cfg.Watch<AcmeService>(ns, Handlers.EnqueueForObject());
 
                             cfg.Options.Reconciler = sp.GetRequiredService<AcmeReconciler>();
-                            cfg.Options.ResyncPeriod = TimeSpan.FromSeconds(10);
+                            //cfg.Options.ResyncPeriod = TimeSpan.FromSeconds(10);
 
                         })
-                        .WithController((sp, cfg) =>
-                        {
-                            cfg.Options.Reconciler = Reconciler.Wrap(async (ctx, req) =>
-                            {
-                                Log.Information("Another reconciler is totally reconiling right now...");
-                                return await Task.FromResult(new ReconcileResult());
-                            });
+                        //.WithController((sp, cfg) =>
+                        //{
+                        //    cfg.Options.Reconciler = Reconciler.Wrap(async (ctx, req) =>
+                        //    {
+                        //        Log.Information("Another reconciler is totally reconiling right now...");
+                        //        return await Task.FromResult(new ReconcileResult());
+                        //    });
 
-                            cfg.Watch<V1Secret>("default", Handlers.ObjectEnqueuer());
-                            cfg.Watch<V1Pod>("kube-system", Handlers.ObjectEnqueuer());
-                        })
+                        //    cfg.Watch<V1Secret>("default", Handlers.ObjectEnqueuer());
+                        //    cfg.Watch<V1Pod>("kube-system", Handlers.ObjectEnqueuer());
+                        //})
                         .Add();
                 });
     }
