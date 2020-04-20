@@ -30,9 +30,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<{{ r.type }}> {{ r.type }}(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<{{ r.type }}>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<{{ r.type }}> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.{{ r.http_message_lister }}(@namespace, watch: true);
+                var list = operations.{{ r.http_message_lister }}(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, {{ r.type }} obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -42,7 +42,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<{{ r.type }}>, OnClose<{{ r.type }}>);
+                }, onError, onClosed);
                 return watch;
             }
 

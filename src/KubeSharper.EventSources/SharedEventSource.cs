@@ -12,7 +12,7 @@ namespace KubeSharper.EventSources
         string ObjectType { get; }
         bool IsRunning { get; }
         IDisposable Subscribe(EventSourceHandler handler);
-        Task Start();
+        void Start();
         Task<IList<KubernetesV1MetaObject>> ListMetaObjects();
     }
     public class SharedEventSource<T> : ISharedEventSource
@@ -36,9 +36,9 @@ namespace KubeSharper.EventSources
             return new SharedEventSourceSubscription(() => RemoveHandler(id));
         }
 
-        public async Task Start()
+        public void Start()
         {
-            await _source.Start(PropagateEvent);
+            _source.Start(PropagateEvent);
         }
 
         public Task<IList<KubernetesV1MetaObject>> ListMetaObjects() => _source.ListMetaObjects();

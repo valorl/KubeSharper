@@ -59,9 +59,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1alpha1RoleBinding> V1alpha1RoleBinding(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1alpha1RoleBinding>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1alpha1RoleBinding> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedRoleBinding1WithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedRoleBinding1WithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1alpha1RoleBinding obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -71,7 +71,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1alpha1RoleBinding>, OnClose<V1alpha1RoleBinding>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -93,9 +93,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1alpha1Role> V1alpha1Role(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1alpha1Role>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1alpha1Role> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedRole1WithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedRole1WithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1alpha1Role obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -105,7 +105,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1alpha1Role>, OnClose<V1alpha1Role>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -127,9 +127,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1beta1RoleBinding> V1beta1RoleBinding(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1beta1RoleBinding>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1beta1RoleBinding> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedRoleBinding2WithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedRoleBinding2WithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1beta1RoleBinding obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -139,7 +139,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1beta1RoleBinding>, OnClose<V1beta1RoleBinding>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -161,9 +161,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1beta1Role> V1beta1Role(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1beta1Role>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1beta1Role> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedRole2WithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedRole2WithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1beta1Role obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -173,7 +173,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1beta1Role>, OnClose<V1beta1Role>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -195,9 +195,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1alpha1PodPreset> V1alpha1PodPreset(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1alpha1PodPreset>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1alpha1PodPreset> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedPodPresetWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedPodPresetWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1alpha1PodPreset obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -207,7 +207,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1alpha1PodPreset>, OnClose<V1alpha1PodPreset>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -229,9 +229,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1NetworkPolicy> V1NetworkPolicy(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1NetworkPolicy>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1NetworkPolicy> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedNetworkPolicyWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedNetworkPolicyWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1NetworkPolicy obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -241,7 +241,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1NetworkPolicy>, OnClose<V1NetworkPolicy>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -263,9 +263,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<Networkingv1beta1Ingress> Networkingv1beta1Ingress(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<Networkingv1beta1Ingress>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<Networkingv1beta1Ingress> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedIngress1WithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedIngress1WithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, Networkingv1beta1Ingress obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -275,7 +275,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<Networkingv1beta1Ingress>, OnClose<Networkingv1beta1Ingress>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -297,9 +297,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1beta1PodDisruptionBudget> V1beta1PodDisruptionBudget(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1beta1PodDisruptionBudget>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1beta1PodDisruptionBudget> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedPodDisruptionBudgetWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedPodDisruptionBudgetWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1beta1PodDisruptionBudget obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -309,7 +309,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1beta1PodDisruptionBudget>, OnClose<V1beta1PodDisruptionBudget>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -331,9 +331,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1RoleBinding> V1RoleBinding(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1RoleBinding>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1RoleBinding> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedRoleBindingWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedRoleBindingWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1RoleBinding obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -343,7 +343,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1RoleBinding>, OnClose<V1RoleBinding>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -365,9 +365,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1Role> V1Role(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1Role>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1Role> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedRoleWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedRoleWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1Role obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -377,7 +377,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1Role>, OnClose<V1Role>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -399,9 +399,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V2beta2HorizontalPodAutoscaler> V2beta2HorizontalPodAutoscaler(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V2beta2HorizontalPodAutoscaler>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V2beta2HorizontalPodAutoscaler> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedHorizontalPodAutoscaler2WithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedHorizontalPodAutoscaler2WithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V2beta2HorizontalPodAutoscaler obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -411,7 +411,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V2beta2HorizontalPodAutoscaler>, OnClose<V2beta2HorizontalPodAutoscaler>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -433,9 +433,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1Job> V1Job(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1Job>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1Job> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedJobWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedJobWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1Job obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -445,7 +445,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1Job>, OnClose<V1Job>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -467,9 +467,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1beta1CronJob> V1beta1CronJob(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1beta1CronJob>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1beta1CronJob> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedCronJobWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedCronJobWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1beta1CronJob obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -479,7 +479,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1beta1CronJob>, OnClose<V1beta1CronJob>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -501,9 +501,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V2alpha1CronJob> V2alpha1CronJob(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V2alpha1CronJob>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V2alpha1CronJob> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedCronJob1WithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedCronJob1WithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V2alpha1CronJob obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -513,7 +513,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V2alpha1CronJob>, OnClose<V2alpha1CronJob>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -535,9 +535,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1Lease> V1Lease(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1Lease>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1Lease> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedLeaseWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedLeaseWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1Lease obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -547,7 +547,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1Lease>, OnClose<V1Lease>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -569,9 +569,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1beta1Lease> V1beta1Lease(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1beta1Lease>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1beta1Lease> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedLease1WithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedLease1WithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1beta1Lease obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -581,7 +581,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1beta1Lease>, OnClose<V1beta1Lease>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -603,9 +603,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1beta1EndpointSlice> V1beta1EndpointSlice(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1beta1EndpointSlice>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1beta1EndpointSlice> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedEndpointSliceWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedEndpointSliceWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1beta1EndpointSlice obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -615,7 +615,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1beta1EndpointSlice>, OnClose<V1beta1EndpointSlice>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -637,9 +637,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1beta1Event> V1beta1Event(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1beta1Event>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1beta1Event> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedEvent1WithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedEvent1WithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1beta1Event obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -649,7 +649,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1beta1Event>, OnClose<V1beta1Event>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -671,9 +671,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<Extensionsv1beta1Ingress> Extensionsv1beta1Ingress(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<Extensionsv1beta1Ingress>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<Extensionsv1beta1Ingress> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedIngressWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedIngressWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, Extensionsv1beta1Ingress obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -683,7 +683,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<Extensionsv1beta1Ingress>, OnClose<Extensionsv1beta1Ingress>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -705,9 +705,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1ControllerRevision> V1ControllerRevision(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1ControllerRevision>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1ControllerRevision> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedControllerRevisionWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedControllerRevisionWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1ControllerRevision obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -717,7 +717,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1ControllerRevision>, OnClose<V1ControllerRevision>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -739,9 +739,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1DaemonSet> V1DaemonSet(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1DaemonSet>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1DaemonSet> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedDaemonSetWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedDaemonSetWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1DaemonSet obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -751,7 +751,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1DaemonSet>, OnClose<V1DaemonSet>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -773,9 +773,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1Deployment> V1Deployment(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1Deployment>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1Deployment> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedDeploymentWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedDeploymentWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1Deployment obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -785,7 +785,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1Deployment>, OnClose<V1Deployment>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -807,9 +807,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1ReplicaSet> V1ReplicaSet(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1ReplicaSet>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1ReplicaSet> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedReplicaSetWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedReplicaSetWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1ReplicaSet obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -819,7 +819,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1ReplicaSet>, OnClose<V1ReplicaSet>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -841,9 +841,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1StatefulSet> V1StatefulSet(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1StatefulSet>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1StatefulSet> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedStatefulSetWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedStatefulSetWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1StatefulSet obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -853,7 +853,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1StatefulSet>, OnClose<V1StatefulSet>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -875,9 +875,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1HorizontalPodAutoscaler> V1HorizontalPodAutoscaler(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1HorizontalPodAutoscaler>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1HorizontalPodAutoscaler> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedHorizontalPodAutoscalerWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedHorizontalPodAutoscalerWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1HorizontalPodAutoscaler obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -887,7 +887,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1HorizontalPodAutoscaler>, OnClose<V1HorizontalPodAutoscaler>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -909,9 +909,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V2beta1HorizontalPodAutoscaler> V2beta1HorizontalPodAutoscaler(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V2beta1HorizontalPodAutoscaler>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V2beta1HorizontalPodAutoscaler> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedHorizontalPodAutoscaler1WithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedHorizontalPodAutoscaler1WithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V2beta1HorizontalPodAutoscaler obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -921,7 +921,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V2beta1HorizontalPodAutoscaler>, OnClose<V2beta1HorizontalPodAutoscaler>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -943,9 +943,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1Service> V1Service(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1Service>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1Service> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedServiceWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedServiceWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1Service obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -955,7 +955,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1Service>, OnClose<V1Service>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -977,9 +977,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1ConfigMap> V1ConfigMap(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1ConfigMap>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1ConfigMap> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedConfigMapWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedConfigMapWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1ConfigMap obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -989,7 +989,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1ConfigMap>, OnClose<V1ConfigMap>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -1011,9 +1011,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1Endpoints> V1Endpoints(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1Endpoints>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1Endpoints> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedEndpointsWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedEndpointsWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1Endpoints obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -1023,7 +1023,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1Endpoints>, OnClose<V1Endpoints>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -1045,9 +1045,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1Event> V1Event(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1Event>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1Event> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedEventWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedEventWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1Event obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -1057,7 +1057,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1Event>, OnClose<V1Event>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -1079,9 +1079,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1LimitRange> V1LimitRange(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1LimitRange>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1LimitRange> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedLimitRangeWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedLimitRangeWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1LimitRange obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -1091,7 +1091,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1LimitRange>, OnClose<V1LimitRange>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -1113,9 +1113,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1PersistentVolumeClaim> V1PersistentVolumeClaim(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1PersistentVolumeClaim>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1PersistentVolumeClaim> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedPersistentVolumeClaimWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedPersistentVolumeClaimWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1PersistentVolumeClaim obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -1125,7 +1125,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1PersistentVolumeClaim>, OnClose<V1PersistentVolumeClaim>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -1147,9 +1147,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1Pod> V1Pod(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1Pod>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1Pod> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedPodWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedPodWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1Pod obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -1159,7 +1159,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1Pod>, OnClose<V1Pod>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -1181,9 +1181,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1PodTemplate> V1PodTemplate(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1PodTemplate>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1PodTemplate> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedPodTemplateWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedPodTemplateWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1PodTemplate obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -1193,7 +1193,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1PodTemplate>, OnClose<V1PodTemplate>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -1215,9 +1215,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1ReplicationController> V1ReplicationController(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1ReplicationController>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1ReplicationController> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedReplicationControllerWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedReplicationControllerWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1ReplicationController obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -1227,7 +1227,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1ReplicationController>, OnClose<V1ReplicationController>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -1249,9 +1249,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1ResourceQuota> V1ResourceQuota(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1ResourceQuota>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1ResourceQuota> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedResourceQuotaWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedResourceQuotaWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1ResourceQuota obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -1261,7 +1261,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1ResourceQuota>, OnClose<V1ResourceQuota>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -1283,9 +1283,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1Secret> V1Secret(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1Secret>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1Secret> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedSecretWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedSecretWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1Secret obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -1295,7 +1295,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1Secret>, OnClose<V1Secret>);
+                }, onError, onClosed);
                 return watch;
             }
 
@@ -1317,9 +1317,9 @@ namespace KubeSharper.EventSources
 
         private EventSource<V1ServiceAccount> V1ServiceAccount(IKubernetes operations, string @namespace, CancellationToken ct)
         {
-            async Task<Watcher<V1ServiceAccount>> WatchMaker(EventSourceHandler onEvent)
+            Watcher<V1ServiceAccount> WatchMaker(EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
-                var list = await operations.ListNamespacedServiceAccountWithHttpMessagesAsync(@namespace, watch: true);
+                var list = operations.ListNamespacedServiceAccountWithHttpMessagesAsync(@namespace, watch: true);
                 var watch = list.Watch(async (WatchEventType et, V1ServiceAccount obj) =>
                 {
                     var metaObj = new KubernetesV1MetaObject
@@ -1329,7 +1329,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                }, OnError<V1ServiceAccount>, OnClose<V1ServiceAccount>);
+                }, onError, onClosed);
                 return watch;
             }
 

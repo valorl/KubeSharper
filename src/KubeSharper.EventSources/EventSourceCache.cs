@@ -10,7 +10,7 @@ namespace KubeSharper.EventSources
     public interface IEventSourceCache : IDisposable
     {
         ISharedEventSource GetNamespacedFor<T>(string @namespace);
-        Task StartAll();
+        void StartAll();
     }
     public class EventSourceCache : IEventSourceCache, IDisposable
     {
@@ -45,11 +45,11 @@ namespace KubeSharper.EventSources
             return source;
         }
 
-        public async Task StartAll()
+        public void StartAll()
         {
             foreach(var s in _sources.Values)
             {
-                await s.Start();
+                s.Start();
             }
         }
 

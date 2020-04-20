@@ -67,7 +67,7 @@ namespace KubeSharper
             await Task.WhenAll(tasks);
 
             //Now start the event sources
-            await Cache.StartAll();
+            Cache.StartAll();
         }
 
         public void Add(IStartable startable) => _startables.Add(startable);

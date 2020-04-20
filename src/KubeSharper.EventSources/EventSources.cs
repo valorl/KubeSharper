@@ -20,7 +20,7 @@ namespace KubeSharper.EventSources
         {
             var crd = CustomResourceDefinition.For<T>();
 
-            async Task<Watcher<CustomResource>> WatchMaker( EventSourceHandler onEvent)
+            Watcher<CustomResource> WatchMaker( EventSourceHandler onEvent, Action<Exception> onError, Action onClosed)
             {
                 var list = operations.ListNamespacedCustomObjectWithHttpMessagesAsync(
                     crd.Group, crd.Version, @namespace, crd.Plural, watch: true);
@@ -33,9 +33,7 @@ namespace KubeSharper.EventSources
                         Metadata = obj.Metadata
                     };
                     await onEvent(et.ToInternal(), metaObj); 
-                },
-                (ex) => Log.Error(ex, "Error while processing watch event"),
-                () => Log.Debug($"Watch connection for {typeof(T).Name} closed"));
+                }, onError, onClosed);
 
                 return watch;
             }
@@ -55,7 +53,7 @@ namespace KubeSharper.EventSources
         }
 
         private void OnError<T>(Exception ex) =>
-            Log.Error(ex, $"Error processing watch event for {typeof(T).Name}");
+            Log.Error(ex, $"Error processing watch event for {typeof(T).Name}: {{Exception}}");
         private void OnClose<T>() => Log.Debug($"Watch connection closed for {typeof(T).Name}");
 
     }
