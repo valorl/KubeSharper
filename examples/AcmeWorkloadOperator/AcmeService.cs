@@ -13,12 +13,19 @@ namespace AcmeWorkloadOperator
 
     public class AcmeServiceSpec
     {
+        public AcmeServiceSpec()
+        {
+            Labels = new Dictionary<string, string>();
+            Config = new Dictionary<string, string>();
+            Environment = new Dictionary<string, string>();
+        }
         public string Name { get; set; }
+        public string Team { get; set; }
         public int Replicas { get; set; }
         public int ImageName { get; set; }
         public int ImageVersion { get; set; }
         public bool Headless { get; set; }
-        public int TargetPort { get; set; }
+        public int Port { get; set; }
         public V1ResourceRequirements Resources { get; set; }
         public V1SecretReference CredentialsSecret { get; set; }
         public Dictionary<string, string> Labels { get; set; }

@@ -21,5 +21,8 @@
     <Reference Include="KubeSharper.Reconcilliation">
       <HintPath>..\..\src\KubeSharper\bin\Debug\netstandard2.1\KubeSharper.Reconcilliation.dll</HintPath>
     </Reference>
+    <Reference Include="KubeSharper.Utils">
+      <HintPath>..\..\src\KubeSharper\bin\Debug\netstandard2.1\KubeSharper.Utils.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
