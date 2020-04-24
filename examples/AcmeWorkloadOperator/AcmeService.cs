@@ -6,7 +6,7 @@ using System.Text;
 
 namespace AcmeWorkloadOperator
 {
-    [CustomResourceDefinition("acme.dev", "v1", "acmeapplications", "acmeapplication")]
+    [CustomResourceDefinition("acme.dev", "v1", "acmeservices", "acmeservice")]
     public class AcmeService : CustomResource<AcmeServiceSpec, AcmeServiceStatus>
     {
     }
@@ -26,7 +26,7 @@ namespace AcmeWorkloadOperator
         public int ImageVersion { get; set; }
         public bool Headless { get; set; }
         public int Port { get; set; }
-        public V1ResourceRequirements Resources { get; set; }
+        public AcmeServiceResources Resources { get; set; }
         public V1SecretReference CredentialsSecret { get; set; }
         public Dictionary<string, string> Labels { get; set; }
         public Dictionary<string, string> Config { get; set; }
@@ -41,4 +41,11 @@ namespace AcmeWorkloadOperator
         public string Service { get; set; }
         public string Ingress { get; set; }
     }
+
+    public class AcmeServiceResources
+    {
+        public Dictionary<string,string> Limits { get; set; }
+        public Dictionary<string,string> Requests { get; set; }
+    }
 }
+

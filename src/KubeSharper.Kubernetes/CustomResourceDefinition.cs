@@ -12,11 +12,11 @@ namespace KubeSharper.Utils
         public string Singular { get; set; }
         public string[] ShortNames { get; set; }
 
-        public static CustomResourceDefinition For<T>()
+        public static CustomResourceDefinition For(Type t)
         {
-            var t = typeof(T);
             var attr = (CustomResourceDefinitionAttribute)
                 Attribute.GetCustomAttribute(t, typeof(CustomResourceDefinitionAttribute));
+            if (attr == null) return null;
 
             return new CustomResourceDefinition
             {
@@ -27,5 +27,6 @@ namespace KubeSharper.Utils
                 ShortNames = attr.ShortNames
             };
         }
+        public static CustomResourceDefinition For<T>() => For(typeof(T));
     }
 }

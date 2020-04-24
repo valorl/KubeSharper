@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AcmeWorkloadOperator.Reconciliation;
 using k8s;
 using k8s.Models;
 using KubeSharper;
