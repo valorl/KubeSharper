@@ -3,6 +3,7 @@ using k8s.Models;
 using KubeSharper.Reconcilliation;
 using KubeSharper.Utils;
 using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.Rest;
 using Newtonsoft.Json.Linq;
 using Serilog;
 using System;
@@ -34,32 +35,39 @@ namespace AcmeWorkloadOperator.Reconciliation
             }
             var obj = ((JObject)response.Body).ToObject<AcmeService>();
             var spec = obj.Spec;
-            var newDeployment = MakeDeployment(spec, obj.Metadata.NamespaceProperty);
+            var newDeployment = MakeDeployment(spec, obj.Metadata.Name, obj.Metadata.NamespaceProperty);
 
             await ApplyDeployment(client, newDeployment);
             return new ReconcileResult();
         }
 
 
-        private V1Deployment MakeDeployment(AcmeServiceSpec spec, string @namespace)
+        private V1Deployment MakeDeployment(AcmeServiceSpec spec, string name, string @namespace)
         {
             var deployment = new V1Deployment
             {
                 Metadata = new V1ObjectMeta
                 {
                     NamespaceProperty = @namespace,
-                    Name = spec.Name,
+                    Name = name,
                     Labels = spec.Labels
                         .WithKeyValue("acme-team", spec.Team)
                 },
                 Spec = new V1DeploymentSpec
                 {
                     Replicas = spec.Replicas,
+                    Selector = new V1LabelSelector
+                    {
+                        MatchLabels = new Dictionary<string,string>()
+                        {
+                            {"app", name} 
+                        }
+                    },
                     Template = new V1PodTemplateSpec
                     {
                         Metadata = new V1ObjectMeta
                         {
-                            Labels = new Dictionary<string, string> { {"app", spec.Name} }
+                            Labels = new Dictionary<string, string> { {"app", name} }
                                 .WithKeyValue("acme-team", spec.Team),
                             
                         },
@@ -75,7 +83,6 @@ namespace AcmeWorkloadOperator.Reconciliation
                                     {
                                         new V1ContainerPort
                                         {
-                                            HostPort = 80,
                                             ContainerPort = spec.Port,
                                         }
                                     }
@@ -91,14 +98,23 @@ namespace AcmeWorkloadOperator.Reconciliation
 
         private async Task ApplyDeployment(IKubernetes client, V1Deployment dep)
         {
-            var existing = await client.ReadNamespacedDeploymentAsync(
-                dep.Metadata.Name, dep.Metadata.NamespaceProperty);
-            if(existing == null)
+            try
             {
-                await client.CreateNamespacedDeploymentAsync(dep, dep.Metadata.NamespaceProperty);
-            }
-            else
-            {
+                HttpOperationResponse<V1Deployment> existing;
+                try
+                {
+                    existing = await client.ReadNamespacedDeploymentWithHttpMessagesAsync(
+                        dep.Metadata.Name, dep.Metadata.NamespaceProperty);
+                }
+                catch(HttpOperationException ex) when (ex.Response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    await client.CreateNamespacedDeploymentAsync(dep, dep.Metadata.NamespaceProperty);
+                }
+                catch(HttpOperationException ex)
+                {
+                    Log.Error($"Unexpected status code ({ex.Response.StatusCode}) when fetching existing deployment.");
+                }
+
                 var patch = new JsonPatchDocument<V1Deployment>()
                     .Replace(o => o.Metadata.Labels, dep.Metadata.Labels)
                     .Replace(o => o.Spec.Replicas, dep.Spec.Replicas)
@@ -106,6 +122,10 @@ namespace AcmeWorkloadOperator.Reconciliation
                     .Replace(o => o.Spec.Template.Spec.Containers, dep.Spec.Template.Spec.Containers);
                 await client.PatchNamespacedDeploymentAsync(
                     new V1Patch(patch), dep.Metadata.Name, dep.Metadata.NamespaceProperty);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, $"Error applying deployment {dep.Metadata.NamespaceProperty}/{dep.Metadata.Name} ");
             }
         }
 
