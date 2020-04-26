@@ -22,8 +22,8 @@ namespace AcmeWorkloadOperator
         public string Name { get; set; }
         public string Team { get; set; }
         public int Replicas { get; set; }
-        public int ImageName { get; set; }
-        public int ImageVersion { get; set; }
+        public string ImageName { get; set; }
+        public string ImageVersion { get; set; }
         public bool Headless { get; set; }
         public int Port { get; set; }
         public AcmeServiceResources Resources { get; set; }

@@ -1,7 +1,26 @@
-apiVersion: valorl.dev/v1
-kind: Example
+apiVersion: acme.dev/v1
+kind: AcmeService
 metadata:
-  name: example-cr-1
+  name: sample-acme-service
 spec:
-  exampleTitle: "Title of example-cr-1"
-  exampleText: "Text of example-cr-1"
+  team: "platform"
+  replicas: 3
+  imageName: brndnmtthws/nginx-echo-headers
+  imageVersion: latest
+  headless: false
+  port: 80
+  resources:
+    limits:
+      memory: "128Mi"
+    requests:
+      memory: "128Mi"
+  credentialsSecret:
+    name: "sample-credentials"
+    namespace: "default"
+  labels:
+    myLabel: "42"
+  config:
+    connectionString: "some-connection-string"
+  environment:
+    SAMPLE_ENV_VAR: "sample-env-var"
+

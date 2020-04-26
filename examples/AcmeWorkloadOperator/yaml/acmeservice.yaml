@@ -27,9 +27,9 @@ spec:
               replicas:
                 type: integer
               imageName:
-                type: integer
+                type: string
               imageVersion:
-                type: integer
+                type: string
               headless:
                 type: boolean
               port:
