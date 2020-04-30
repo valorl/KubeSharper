@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 
 namespace AcmeWorkloadOperator.Helpers
 {
-    public class ServiceApplier : IForOwnerApplier<AcmeService>
+    public class ServiceManager : IManagerFor<AcmeService>
     {
         private readonly IKubernetes _client;
-        public ServiceApplier(IKubernetes client)
+        public ServiceManager(IKubernetes client)
         {
             _client = client;
         }
@@ -61,17 +61,7 @@ namespace AcmeWorkloadOperator.Helpers
                 {
                     NamespaceProperty = @namespace,
                     Name = name,
-                    OwnerReferences = new List<V1OwnerReference>
-                    {
-                        new V1OwnerReference
-                        {
-                            Controller = true,
-                            ApiVersion = "acme.dev/v1",
-                            Kind = "AcmeService",
-                            Name = owner.Metadata.Name,
-                            Uid = owner.Metadata.Uid
-                        }
-                    },
+                    OwnerReferences = OwnerReferenceFactory.NewList(owner),
                     Labels = spec.Labels
                         .WithKeyValue("acme-team", spec.Team)
                 },

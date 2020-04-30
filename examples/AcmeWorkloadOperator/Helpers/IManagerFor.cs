@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace AcmeWorkloadOperator.Helpers
 {
-    public interface IForOwnerApplier<TOwner>
+    public interface IManagerFor<TOwner>
     {
         Task Apply(TOwner spec, string name, string @namespace);
     }

@@ -40,15 +40,13 @@ namespace AcmeWorkloadOperator.Reconciliation
 
             var (name, @namespace) = (obj.Metadata.Name, obj.Metadata.NamespaceProperty);
 
-            var deploymentApplier = new DeploymentApplier(client);
+            var deploymentApplier = new DeploymentManager(client);
             await deploymentApplier.Apply(obj, name, @namespace);
 
-            var serviceApplier = new ServiceApplier(client);
+            var serviceApplier = new ServiceManager(client);
             await serviceApplier.Apply(obj, name, @namespace);
 
             return new ReconcileResult();
         }
-
-
     }
 }
