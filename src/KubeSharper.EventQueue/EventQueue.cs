@@ -20,14 +20,16 @@ namespace KubeSharper.EventQueue
 
         public async Task<bool> TryAdd(T item)
         {
-            Log.Debug($"Trying to add {item}");
             lock (_lock)
             {
+                Log.Debug($"[Queue] Set {{{string.Join(", ", _set.Keys)}}}, Queue: {_items.Count}");
+                Log.Debug($"[Queue] Trying to add {item}");
                 if (!SetAdd(item)) return false; 
                 _items.Enqueue(item);
+                Log.Debug($"[Queue] Enqueued {item}");
                 _sem.Release(1);
+                Log.Debug($"[Queue] Semaphore count {_sem.CurrentCount}");
             }
-            Log.Debug($"{item} enqueued");
             return await Task.FromResult(true);
         }
 
@@ -37,10 +39,13 @@ namespace KubeSharper.EventQueue
             T dequeued;
             lock(_lock)
             {
+                Log.Debug($"[Queue] Semaphore count {_sem.CurrentCount}");
                 dequeued = _items.Dequeue();
-                Log.Debug($"Dequeued {dequeued}");
+                Log.Debug($"[Queue] Dequeued {dequeued}");
+                Log.Debug($"[Queue] Semaphore count {_sem.CurrentCount}");
+
                 
-                Log.Debug($"Removing {dequeued} from set");
+                Log.Debug($"[Queue] Removing {dequeued} from set");
                 SetRemove(dequeued);
             }
             return dequeued;
@@ -57,13 +62,14 @@ namespace KubeSharper.EventQueue
 
         private bool SetAdd(T item)
         {
+            Log.Debug($"[Queue] Set {{{string.Join(", ", _set.Keys)}}}, Queue: {_items.Count}");
             if (_set.ContainsKey(item))
             {
-                Log.Debug($"{item} already in set");
+                Log.Debug($"[Queue] Item already in set: {item}");
                 return false;
             }
             _set.Add(item, 1);
-            Log.Debug($"{item} added to set");
+            Log.Debug($"[Queue] Item added to set: {item}");
             return true;
         }
         private void SetRemove(T item)
@@ -71,6 +77,7 @@ namespace KubeSharper.EventQueue
             if(_set.ContainsKey(item))
             {
                 _set.Remove(item);
+                Log.Debug($"[Queue] Set {{{string.Join(", ", _set.Keys)}}}, Queue: {_items.Count}");
             }
         }
     }

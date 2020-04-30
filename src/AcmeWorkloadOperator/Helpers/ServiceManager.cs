@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace AcmeWorkloadOperator.Helpers
 {
-    public class ServiceManager : IManagerFor<AcmeService>
+    public class ServiceManager
     {
         private readonly IKubernetes _client;
         public ServiceManager(IKubernetes client)
@@ -19,7 +19,7 @@ namespace AcmeWorkloadOperator.Helpers
             _client = client;
         }
 
-        public async Task Apply(AcmeService owner, string name, string @namespace)
+        public async Task<V1Service> Apply(AcmeService owner, string name, string @namespace)
         {
             var obj = Make(owner, name, @namespace);
             try
@@ -32,7 +32,7 @@ namespace AcmeWorkloadOperator.Helpers
                 }
                 catch(HttpOperationException ex) when (ex.Response.StatusCode == HttpStatusCode.NotFound)
                 {
-                    await _client.CreateNamespacedServiceAsync(obj, obj.Metadata.NamespaceProperty);
+                    return await _client.CreateNamespacedServiceAsync(obj, obj.Metadata.NamespaceProperty);
                 }
                 catch(HttpOperationException ex)
                 {
@@ -43,7 +43,7 @@ namespace AcmeWorkloadOperator.Helpers
                 var patch = new JsonPatchDocument<V1Service>()
                     .Replace(o => o.Metadata.Labels, obj.Metadata.Labels)
                     .Replace(o => o.Spec.Ports, obj.Spec.Ports);
-                await _client.PatchNamespacedServiceAsync(
+                return await _client.PatchNamespacedServiceAsync(
                     new V1Patch(patch), obj.Metadata.Name, obj.Metadata.NamespaceProperty);
             }
             catch (Exception ex)

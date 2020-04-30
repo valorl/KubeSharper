@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace AcmeWorkloadOperator.Helpers
 {
-    public class DeploymentManager : IManagerFor<AcmeService>
+    public class DeploymentManager 
     {
         private readonly IKubernetes _client;
         public DeploymentManager(IKubernetes client)
@@ -19,7 +19,7 @@ namespace AcmeWorkloadOperator.Helpers
             _client = client;
         }
 
-        public async Task Apply(AcmeService owner, string name, string @namespace)
+        public async Task<V1Deployment> Apply(AcmeService owner, string name, string @namespace)
         {
             var obj = Make(owner, name, @namespace);
             try
@@ -32,7 +32,7 @@ namespace AcmeWorkloadOperator.Helpers
                 }
                 catch(HttpOperationException ex) when (ex.Response.StatusCode == HttpStatusCode.NotFound)
                 {
-                    await _client.CreateNamespacedDeploymentAsync(obj, obj.Metadata.NamespaceProperty);
+                    return await _client.CreateNamespacedDeploymentAsync(obj, obj.Metadata.NamespaceProperty);
                 }
                 catch(HttpOperationException ex)
                 {
@@ -45,7 +45,7 @@ namespace AcmeWorkloadOperator.Helpers
                     .Replace(o => o.Spec.Replicas, obj.Spec.Replicas)
                     .Replace(o => o.Spec.Template.Metadata.Labels, obj.Spec.Template.Metadata.Labels)
                     .Replace(o => o.Spec.Template.Spec.Containers, obj.Spec.Template.Spec.Containers);
-                await _client.PatchNamespacedDeploymentAsync(
+                return await _client.PatchNamespacedDeploymentAsync(
                     new V1Patch(patch), obj.Metadata.Name, obj.Metadata.NamespaceProperty);
             }
             catch (Exception ex)

@@ -97,6 +97,7 @@ namespace KubeSharper
             var ctx = new ReconcileContext(Client);
             await foreach (var req in Queue.GetStream().WithCancellation(ct))
             {
+                Log.Debug($"[Reconcile loop] Got item {req}");
                 var result = await Reconciler.Reconcile(ctx, req);
                 if(result.Requeue)
                 {

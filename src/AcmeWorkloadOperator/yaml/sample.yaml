@@ -19,8 +19,6 @@ spec:
     namespace: "default"
   labels:
     myLabel: "42"
-  config:
-    connectionString: "some-connection-string"
   environment:
     SAMPLE_ENV_VAR: "sample-env-var"
 

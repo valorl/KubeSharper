@@ -55,6 +55,5 @@ namespace KubeSharper.EventSources
         private void OnError<T>(Exception ex) =>
             Log.Error(ex, $"Error processing watch event for {typeof(T).Name}: {{Exception}}");
         private void OnClose<T>() => Log.Debug($"Watch connection closed for {typeof(T).Name}");
-
     }
 }

@@ -56,10 +56,6 @@ spec:
                 type: object
                 additionalProperties:
                   type: string
-              config:
-                type: object
-                additionalProperties:
-                  type: string
               environment:
                 type: object
                 additionalProperties:
@@ -67,15 +63,7 @@ spec:
           status:
             type: object
             properties:
-              secrets:
-                type: array
-                items:
-                  type: string
-              configMap:
-                type: string
-              deployment:
-                type: string
-              service:
+              serviceIP:
                 type: string
               ingress:
                 type: string

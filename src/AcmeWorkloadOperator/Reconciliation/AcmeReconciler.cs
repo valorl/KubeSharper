@@ -36,17 +36,31 @@ namespace AcmeWorkloadOperator.Reconciliation
                 //TODO: Garbage collection ?
             }
             var obj = ((JObject)response.Body).ToObject<AcmeService>();
-            var spec = obj.Spec;
 
             var (name, @namespace) = (obj.Metadata.Name, obj.Metadata.NamespaceProperty);
 
             var deploymentApplier = new DeploymentManager(client);
-            await deploymentApplier.Apply(obj, name, @namespace);
+            var deployment = await deploymentApplier.Apply(obj, name, @namespace);
 
             var serviceApplier = new ServiceManager(client);
-            await serviceApplier.Apply(obj, name, @namespace);
+            var service = await serviceApplier.Apply(obj, name, @namespace);
 
+            await PatchServiceInfo(client, obj, service);
             return new ReconcileResult();
+        }
+
+        private async Task<AcmeService> PatchServiceInfo(IKubernetes client, AcmeService owner, V1Service service)
+        {
+            var crd = CustomResourceDefinition.For<AcmeService>();
+            var @namespace = owner.Metadata.NamespaceProperty;
+            var name = owner.Metadata.Name;
+            var patch = new JsonPatchDocument<AcmeService>()
+                .Replace(o => o.Status.ServiceIP, service.Spec.ClusterIP);
+            var response =  await client.PatchNamespacedCustomObjectWithHttpMessagesAsync(
+                new V1Patch(patch), crd.Group, crd.Version, @namespace, crd.Plural, name);
+            var jObj = (JObject)response.Body;
+            var patched = jObj.ToObject<AcmeService>();
+            return patched;
         }
     }
 }

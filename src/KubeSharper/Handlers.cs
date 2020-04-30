@@ -74,7 +74,7 @@ namespace KubeSharper
         {
             if (!await queue.TryAdd(req))
             {
-                Log.Error($"Failed adding request for {req}");
+                Log.Warning($"Request not added ({req})");
             }
             else
             {

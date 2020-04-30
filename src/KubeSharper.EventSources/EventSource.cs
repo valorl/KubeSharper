@@ -34,7 +34,7 @@ namespace KubeSharper.EventSources
         private Watcher<T> _watcher;
 
         public string ObjectType { get; }
-        public bool IsRunning => _watcher.Watching;
+        public bool IsRunning => _watcher?.Watching ?? false;
 
 
         internal EventSource(
@@ -62,15 +62,28 @@ namespace KubeSharper.EventSources
         {
             void OnError(Exception ex)
             {
-                Log.Error(ex, $"Watch error for {typeof(T).Name}");
+                if(ex is TaskCanceledException)
+                {
+                    Log.Warning($"Watch task cancelled for {ObjectType}");
+                }
+                else
+                {
+                    Log.Error(ex, $"Watch error for {ObjectType}");
+                }
                 InitWatcher(handler);
             }
             void OnClosed()
             {
-                Log.Warning($"Watch closed for {typeof(T).Name}");
+                Log.Warning($"Watch closed for {ObjectType}");
                 InitWatcher(handler);
             }
-            _watcher = _watchMaker(handler.Invoke, OnError, OnClosed);
+            if (!IsRunning)
+            {
+                _watcher = _watchMaker(handler.Invoke, OnError, OnClosed);
+                Log.Debug($"Watcher for {ObjectType} initialized");
+            }
+            //_watcher = _watchMaker(handler.Invoke, OnError, OnClosed);
+            //Log.Debug($"Watcher for {ObjectType} initialized");
         }
 
         public async Task<IList<KubernetesV1MetaObject>> ListMetaObjects()
@@ -93,7 +106,7 @@ namespace KubeSharper.EventSources
         public void Dispose()
         {
             _cts.Cancel();
-            _watcher.Dispose();
+            _watcher?.Dispose();
         }
     }
 }
