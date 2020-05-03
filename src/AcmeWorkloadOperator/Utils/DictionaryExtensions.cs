@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AcmeWorkloadOperator
+namespace AcmeWorkloadOperator.Utils
 {
     public static class DictionaryExtensions
     {

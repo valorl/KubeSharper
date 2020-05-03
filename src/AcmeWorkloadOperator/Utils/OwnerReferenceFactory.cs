@@ -1,9 +1,10 @@
-﻿using k8s.Models;
+﻿using AcmeWorkloadOperator.Acme;
+using k8s.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace AcmeWorkloadOperator.Helpers
+namespace AcmeWorkloadOperator.Utils
 {
     public class OwnerReferenceFactory
     {

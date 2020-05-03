@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace AcmeWorkloadOperator
+namespace AcmeWorkloadOperator.Acme
 {
     [CustomResourceDefinition("acme.dev", "v1", "acmeservices", "acmeservice")]
     public class AcmeService : CustomResource<AcmeServiceSpec, AcmeServiceStatus>

@@ -1,4 +1,5 @@
-﻿using k8s;
+﻿using AcmeWorkloadOperator.Utils;
+using k8s;
 using k8s.Models;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.Rest;
@@ -9,7 +10,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AcmeWorkloadOperator.Helpers
+namespace AcmeWorkloadOperator.Acme
 {
     public class ServiceManager
     {

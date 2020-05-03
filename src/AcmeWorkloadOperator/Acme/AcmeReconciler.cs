@@ -1,4 +1,4 @@
-﻿using AcmeWorkloadOperator.Helpers;
+﻿using AcmeWorkloadOperator.Utils;
 using k8s;
 using k8s.Models;
 using KubeSharper.Reconcilliation;
@@ -14,7 +14,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AcmeWorkloadOperator.Reconciliation
+namespace AcmeWorkloadOperator.Acme
 {
     public class AcmeReconciler : IReconciler
     {
