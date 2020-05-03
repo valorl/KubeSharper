@@ -5,15 +5,16 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 
 namespace KubeSharper.EventQueue
 {
     public class EventQueue<T> : IEventQueue<T> 
     {
-        private readonly Queue<T> _items = new Queue<T>();
+        private readonly BufferBlock<T> _items = new BufferBlock<T>();
         private readonly Dictionary<T, byte> _set = new Dictionary<T, byte>();
         private static readonly object _lock = new object();
-        private readonly SemaphoreSlim _sem = new SemaphoreSlim(0);
+        private readonly SemaphoreSlim _sem = new SemaphoreSlim(1);
 
 
         public int Count => _items.Count;
@@ -22,47 +23,58 @@ namespace KubeSharper.EventQueue
         {
             lock (_lock)
             {
-                Log.Debug($"[Queue] Set {{{string.Join(", ", _set.Keys)}}}, Queue: {_items.Count}");
-                Log.Debug($"[Queue] Trying to add {item}");
                 if (!SetAdd(item)) return false; 
-                _items.Enqueue(item);
+                _items.Post(item);
                 Log.Debug($"[Queue] Enqueued {item}");
-                _sem.Release(1);
-                Log.Debug($"[Queue] Semaphore count {_sem.CurrentCount}");
+                Log.Debug($"[Queue] [ENQ] Set: {_set.Count}, Queue: {_items.Count}");
             }
             return await Task.FromResult(true);
         }
 
         public async Task<T> Take(CancellationToken ct = default)
         {
-            await _sem.WaitAsync(ct);
-            T dequeued;
-            lock(_lock)
-            {
-                Log.Debug($"[Queue] Semaphore count {_sem.CurrentCount}");
-                dequeued = _items.Dequeue();
-                Log.Debug($"[Queue] Dequeued {dequeued}");
-                Log.Debug($"[Queue] Semaphore count {_sem.CurrentCount}");
+            var dequeued = await _items.ReceiveAsync();
+            SetRemove(dequeued);
+            Log.Debug($"[Queue] [DEQ] Set: {_set.Count}, Queue: {_items.Count}");
+            return dequeued;
+            //T dequeued;
+            //lock(_lock)
+            //{
+            //    Log.Debug($"[Queue] Semaphore count {_sem.CurrentCount}");
+            //    dequeued = _items.Dequeue();
+            //    Log.Debug($"[Queue] Dequeued {dequeued}");
+            //    Log.Debug($"[Queue] Semaphore count {_sem.CurrentCount}");
 
                 
-                Log.Debug($"[Queue] Removing {dequeued} from set");
-                SetRemove(dequeued);
-            }
-            return dequeued;
+            //    Log.Debug($"[Queue] Removing {dequeued} from set");
+            //    SetRemove(dequeued);
+            //}
+            //return dequeued;
         }
 
         public async IAsyncEnumerable<T> GetStream(
             [EnumeratorCancellation] CancellationToken ct = default)
         {
-            while(!ct.IsCancellationRequested)
+            await _sem.WaitAsync();
+            try
             {
-                yield return await Take(ct);
+                while(true)
+                {
+                    ct.ThrowIfCancellationRequested();
+                    var dequeued = await _items.ReceiveAsync();
+                    SetRemove(dequeued);
+                    Log.Debug($"[Queue] [DEQ] Set: {_set.Count}, Queue: {_items.Count}");
+                    yield return dequeued;
+                }
+            }
+            finally
+            {
+                _sem.Release();
             }
         }
 
         private bool SetAdd(T item)
         {
-            Log.Debug($"[Queue] Set {{{string.Join(", ", _set.Keys)}}}, Queue: {_items.Count}");
             if (_set.ContainsKey(item))
             {
                 Log.Debug($"[Queue] Item already in set: {item}");
@@ -77,7 +89,6 @@ namespace KubeSharper.EventQueue
             if(_set.ContainsKey(item))
             {
                 _set.Remove(item);
-                Log.Debug($"[Queue] Set {{{string.Join(", ", _set.Keys)}}}, Queue: {_items.Count}");
             }
         }
     }

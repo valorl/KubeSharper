@@ -95,15 +95,35 @@ namespace KubeSharper
         {
             Log.Debug("Entering reconcile loop");
             var ctx = new ReconcileContext(Client);
-            await foreach (var req in Queue.GetStream().WithCancellation(ct))
+            //await foreach (var req in Queue.GetStream().WithCancellation(ct))
+            //{
+            //    Log.Debug($"[Reconcile loop] Got item {req}");
+            //    var result = await Reconciler.Reconcile(ctx, req);
+            //    if(result.Requeue)
+            //    {
+            //        _ = Requeue(req, result.RequeueAfter, ct);
+            //    }
+            //}
+            while (!ct.IsCancellationRequested)
             {
+                Log.Debug($"[Reconcile loop] Gonna get item!");
+                var req = await Queue.Take(ct);
                 Log.Debug($"[Reconcile loop] Got item {req}");
-                var result = await Reconciler.Reconcile(ctx, req);
-                if(result.Requeue)
+                ReconcileResult result;
+                try
                 {
-                    _ = Requeue(req, result.RequeueAfter, ct);
+                    result = await Reconciler.Reconcile(ctx, req);
+                    if(result.Requeue)
+                    {
+                        _ = Requeue(req, result.RequeueAfter, ct);
+                    }
+                }
+                catch(Exception ex)
+                {
+                    Log.Error(ex, "Error during reconciliation");
                 }
             }
+            Log.Debug("Exiting reconcile loop");
         }
 
         private async Task Requeue(ReconcileRequest req, TimeSpan after, CancellationToken ct)
