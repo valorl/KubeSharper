@@ -12,6 +12,9 @@ namespace KubeSharper.Utils
     }
 
     public abstract class CustomResource<TSpec, TStatus> : CustomResource
+        where TSpec : new()
+        where TStatus : new()
+        
     {
         public TSpec Spec { get; set; }
         public TStatus Status { get; set; }

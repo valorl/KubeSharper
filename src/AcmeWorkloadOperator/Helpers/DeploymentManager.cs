@@ -45,8 +45,10 @@ namespace AcmeWorkloadOperator.Helpers
                     .Replace(o => o.Spec.Replicas, obj.Spec.Replicas)
                     .Replace(o => o.Spec.Template.Metadata.Labels, obj.Spec.Template.Metadata.Labels)
                     .Replace(o => o.Spec.Template.Spec.Containers, obj.Spec.Template.Spec.Containers);
-                return await _client.PatchNamespacedDeploymentAsync(
-                    new V1Patch(patch), obj.Metadata.Name, obj.Metadata.NamespaceProperty);
+                var v1p = new V1Patch(patch);
+                var response = await _client.PatchNamespacedDeploymentWithHttpMessagesAsync(
+                    v1p, obj.Metadata.Name, obj.Metadata.NamespaceProperty);
+                return response.Body;
             }
             catch (Exception ex)
             {
