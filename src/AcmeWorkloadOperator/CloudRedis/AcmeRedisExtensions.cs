@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static Google.Cloud.Redis.V1.Instance.Types;
 
 namespace AcmeWorkloadOperator.CloudRedis
 {
@@ -14,8 +15,9 @@ namespace AcmeWorkloadOperator.CloudRedis
                 Name = InstanceName.FormatProjectLocationInstance(
                     locationId, locationId, obj.Spec.Name),
                 MemorySizeGb = obj.Spec.MemorySizeGb,
+                Tier = Tier.Basic
             };
-            instance.Labels.Add("created-by", "acme-workload-operator/cloud-redis-reconciler");
+            instance.Labels.Add("created-by", "acme-cloud-redis-reconciler");
             return instance;
         }
 

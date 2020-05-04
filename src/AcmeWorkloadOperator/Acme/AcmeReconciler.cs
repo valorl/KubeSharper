@@ -18,9 +18,17 @@ namespace AcmeWorkloadOperator.Acme
 {
     public class AcmeReconciler : IReconciler
     {
+        //private readonly DeploymentManager _deploymentMgr;
+        //private readonly ServiceManager _serviceMgr;
+
+        //public AcmeReconciler(DeploymentManager deploymentMgr, ServiceManager serviceMgr)
+        //{
+        //    _deploymentMgr = deploymentMgr;
+        //    _serviceMgr = serviceMgr;
+        //}
         public async Task<ReconcileResult> Reconcile(ReconcileContext context, ReconcileRequest request)
         {
-            Log.Information($"[{nameof(AcmeReconciler)}] Request received for {request}");
+            Log.Information($"[{this.GetType().Name}] Request received for {request}");
             var client = context.Client;
             var result = await DoAcmeService(client, request);
             return result;
@@ -34,7 +42,8 @@ namespace AcmeWorkloadOperator.Acme
             if(response.Response.StatusCode == HttpStatusCode.NotFound)
             {
                 Log.Error($"Request object not found: {req}.");
-                //TODO: Garbage collection ?
+                return new ReconcileResult();
+                // Garbage collection happens automatically since all resources are native
             }
             var obj = ((JObject)response.Body).ToObject<AcmeService>();
 
@@ -60,22 +69,15 @@ namespace AcmeWorkloadOperator.Acme
 
             var patch = (owner.Status) switch
             {
-                null => NewPatch()
+                null => Patch.New<AcmeService>()
                     .Add(o => o.Status, new AcmeServiceStatus())
                     .Add(o => o.Status.ServiceIP, service.Spec.ClusterIP),
 
-                _ => NewPatch().Replace(o => o.Status.ServiceIP, service.Spec.ClusterIP)
+                _ => Patch.New<AcmeService>().Replace(o => o.Status.ServiceIP, service.Spec.ClusterIP)
             };
             return await PatchAcmeService(client, owner, patch);
         }
 
-        private JsonPatchDocument<AcmeService> NewPatch()
-        {
-            return new JsonPatchDocument<AcmeService>()
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
-            };
-        }
 
         private async Task<AcmeService> PatchAcmeService(
             IKubernetes client, AcmeService obj, JsonPatchDocument<AcmeService> patch)

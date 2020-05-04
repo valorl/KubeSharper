@@ -1,0 +1,7 @@
+apiVersion: acme.dev/v1
+kind: AcmeRedis
+metadata:
+  name: sample-redis
+spec:
+  name: sample-redis
+  memorySizeGb: 1

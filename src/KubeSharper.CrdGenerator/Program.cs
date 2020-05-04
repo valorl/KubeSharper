@@ -22,8 +22,8 @@ namespace KubeSharper.CrdGenerator
     {
         static void Main(string[] args)
         {
-            var assemblyPath = args.ElementAtOrDefault(1) ?? @"../../../../../examples/AcmeWorkloadOperator/bin/Debug/netcoreapp3.1/AcmeWorkloadOperator.dll";
-            var outputPath = args.ElementAtOrDefault(2) ?? @"../../../../../examples/AcmeWorkloadOperator/yaml";
+            var assemblyPath = args.ElementAtOrDefault(1) ?? @"../../../../AcmeWorkloadOperator/bin/Debug/netcoreapp3.1/AcmeWorkloadOperator.dll";
+            var outputPath = args.ElementAtOrDefault(2) ?? @"../../../../AcmeWorkloadOperator/yaml";
             var assembly = Assembly.LoadFrom(assemblyPath);
             var types = assembly.GetTypes();
 

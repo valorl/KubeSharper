@@ -1,0 +1,40 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: acmeredises.acme.dev
+spec:
+  group: acme.dev
+  names:
+    plural: acmeredises
+    singular: acmeredis
+    kind: AcmeRedis
+  scope: Namespaced
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              name:
+                type: string
+              memorySizeGb:
+                type: integer
+          status:
+            type: object
+            properties:
+              id:
+                type: string
+              createdAt:
+                type: string
+                format: date-time
+              location:
+                type: string
+              host:
+                type: string
+              port:
+                type: integer
