@@ -1,5 +1,5 @@
 ﻿using k8s.Models;
-using KubeSharper.EventQueue;
+using KubeSharper.WorkQueue;
 using KubeSharper.Reconcilliation;
 using KubeSharper.Utils;
 using Serilog;
@@ -11,7 +11,7 @@ namespace KubeSharper
 {
     public static class Handlers
     {
-        public delegate Task EnqueueingHandler(EventType et, KubernetesV1MetaObject obj, IEventQueue<ReconcileRequest> queue);
+        public delegate Task EnqueueingHandler(EventType et, KubernetesV1MetaObject obj, IWorkQueue<ReconcileRequest> queue);
         public static EnqueueingHandler EnqueueForObject()
         {
             return LogException(async (et, obj, q) =>
@@ -70,7 +70,7 @@ namespace KubeSharper
             }
         };
 
-        private static async Task EnqueueRequest(IEventQueue<ReconcileRequest> queue, ReconcileRequest req)
+        private static async Task EnqueueRequest(IWorkQueue<ReconcileRequest> queue, ReconcileRequest req)
         {
             if (!await queue.TryAdd(req))
             {

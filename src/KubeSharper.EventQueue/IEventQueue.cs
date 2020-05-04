@@ -5,12 +5,13 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace KubeSharper.EventQueue
+namespace KubeSharper.WorkQueue
 {
-    public interface IEventQueue<T>
+    public interface IWorkQueue<T>
     {
+
         Task<bool> TryAdd(T item);
-        Task<T> Take(CancellationToken ct = default);
-        IAsyncEnumerable<T> GetStream(CancellationToken ct = default);
+        Task<(bool,T)> TryTake(CancellationToken ct = default);
+        Task<bool> MarkProcessed(T item);
     }
 }

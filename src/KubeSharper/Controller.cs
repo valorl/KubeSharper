@@ -1,5 +1,5 @@
 ﻿using k8s;
-using KubeSharper.EventQueue;
+using KubeSharper.WorkQueue;
 using KubeSharper.EventSources;
 using KubeSharper.Reconcilliation;
 using KubeSharper.Utils;
@@ -39,7 +39,7 @@ namespace KubeSharper
         public string Id => Guid.NewGuid().ToString("N")[..6];
         internal IKubernetes Client { get; set; }
         internal IReconciler Reconciler { get; set; }
-        internal IEventQueue<ReconcileRequest> Queue { get; set; }
+        internal IWorkQueue<ReconcileRequest> Queue { get; set; }
         internal IEventSourceCache Cache { get; set; }
         internal TimeSpan ResyncPeriod { get; set; }
 
@@ -51,7 +51,7 @@ namespace KubeSharper
             Reconciler = opts.Reconciler;
             ResyncPeriod = opts.ResyncPeriod;
 
-            Queue = new EventQueue<ReconcileRequest>();
+            Queue = new WorkQueue<ReconcileRequest>();
             manager.Add(this);
         }
 
@@ -107,7 +107,8 @@ namespace KubeSharper
             while (!ct.IsCancellationRequested)
             {
                 Log.Debug($"[Reconcile loop] Gonna get item!");
-                var req = await Queue.Take(ct);
+                var (success, req) = await Queue.TryTake(ct);
+                if (!success) continue;
                 Log.Debug($"[Reconcile loop] Got item {req}");
                 ReconcileResult result;
                 try
@@ -122,6 +123,7 @@ namespace KubeSharper
                 {
                     Log.Error(ex, "Error during reconciliation");
                 }
+                await Queue.MarkProcessed(req);
             }
             Log.Debug("Exiting reconcile loop");
         }

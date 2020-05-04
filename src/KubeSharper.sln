@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KubeSharper", "KubeSharper\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KubeSharper.EventSources", "KubeSharper.EventSources\KubeSharper.EventSources.csproj", "{541E2514-E004-4CF4-80F6-096F28653CE2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KubeSharper.EventQueue", "KubeSharper.EventQueue\KubeSharper.EventQueue.csproj", "{41E3FB93-DEB7-4086-B174-D60F8E12B2FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KubeSharper.WorkQueue", "KubeSharper.EventQueue\KubeSharper.WorkQueue.csproj", "{41E3FB93-DEB7-4086-B174-D60F8E12B2FB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KubeSharper.Reconcilliation", "KubeSharper.Reconcilliation\KubeSharper.Reconcilliation.csproj", "{5C9A12DC-B569-4FD3-86AA-A2818475F713}"
 EndProject

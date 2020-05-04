@@ -1,5 +1,5 @@
 ﻿using k8s;
-using KubeSharper.EventQueue;
+using KubeSharper.WorkQueue;
 using KubeSharper.Reconcilliation;
 using KubeSharper.Utils;
 using Newtonsoft.Json.Linq;
