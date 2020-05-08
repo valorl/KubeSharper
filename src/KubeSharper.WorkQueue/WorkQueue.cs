@@ -38,8 +38,7 @@ namespace KubeSharper.WorkQueue
 
         public async Task<bool> TryAdd(T item)
         {
-            await _mutex.WaitAsync();
-            try
+            using(await _mutex.Use())
             {
                 if (_items.Has(item)) return false;
                 _items.Add(item);
@@ -51,21 +50,19 @@ namespace KubeSharper.WorkQueue
                 }
                 return true;
             }
-            finally
-            {
-                _mutex.Release();
-            }
         }
 
         public async Task<(bool,T)> TryTake(CancellationToken ct = default)
         {
-            await _mutex.WaitAsync();
             var (success, item) = (false, default(T));
             try
             {
                 item = await _queue.ReceiveAsync(ct);
-                _processing.Add(item);
-                _items.Delete(item);
+                using(await _mutex.Use())
+                {
+                    _processing.Add(item);
+                    _items.Delete(item);
+                }
                 success = true;
             }
             catch (InvalidOperationException)
@@ -73,17 +70,12 @@ namespace KubeSharper.WorkQueue
                 // Thrown by ReceiveAsync if queue empty
                 // success already false, nothing to do here
             }
-            finally
-            {
-                _mutex.Release();
-            }
             return (success, item);
         }
 
         public async Task<bool> MarkProcessed(T item)
         {
-            await _mutex.WaitAsync();
-            try
+            using(await _mutex.Use())
             {
                 var success = _processing.Delete(item);
 
@@ -96,10 +88,6 @@ namespace KubeSharper.WorkQueue
 
                 return success;
             }
-            finally
-            {
-                _mutex.Release();
-            }
         }
 
         private void LogStats()
@@ -107,5 +95,4 @@ namespace KubeSharper.WorkQueue
             Log.Debug($"[Queue] Items: {_items.Count}, Queue: {_queue.Count}, Proc: {_processing.Count}");
         }
     }
-
 }

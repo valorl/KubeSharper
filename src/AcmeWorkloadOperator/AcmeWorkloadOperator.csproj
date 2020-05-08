@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\KubeSharper.Kubernetes\KubeSharper.Utils.csproj" />
     <ProjectReference Include="..\KubeSharper.Reconcilliation\KubeSharper.Reconcilliation.csproj" />
+    <ProjectReference Include="..\KubeSharper.WorkQueue\KubeSharper.WorkQueue.csproj" />
     <ProjectReference Include="..\KubeSharper\KubeSharper.csproj" />
   </ItemGroup>
 </Project>

@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KubeSharper", "KubeSharper\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KubeSharper.EventSources", "KubeSharper.EventSources\KubeSharper.EventSources.csproj", "{541E2514-E004-4CF4-80F6-096F28653CE2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KubeSharper.WorkQueue", "KubeSharper.EventQueue\KubeSharper.WorkQueue.csproj", "{41E3FB93-DEB7-4086-B174-D60F8E12B2FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KubeSharper.WorkQueue", "KubeSharper.WorkQueue\KubeSharper.WorkQueue.csproj", "{41E3FB93-DEB7-4086-B174-D60F8E12B2FB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KubeSharper.Reconcilliation", "KubeSharper.Reconcilliation\KubeSharper.Reconcilliation.csproj", "{5C9A12DC-B569-4FD3-86AA-A2818475F713}"
 EndProject
@@ -18,6 +18,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KubeSharper.CrdGenerator", "KubeSharper.CrdGenerator\KubeSharper.CrdGenerator.csproj", "{E298D6FA-5B24-4E92-B418-EE59AC9B30B6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AcmeWorkloadOperator", "AcmeWorkloadOperator\AcmeWorkloadOperator.csproj", "{817BD71F-67AD-414C-B39E-8FCD050FEA6B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{7FF07E99-1C36-4DC2-9155-1588165D4FE2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KubeSharper.UnitTests", "KubeSharper.UnitTests\KubeSharper.UnitTests.csproj", "{982F2896-A9A8-425D-BD84-F6D6E193C7A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,9 +61,16 @@ Global
 		{817BD71F-67AD-414C-B39E-8FCD050FEA6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{817BD71F-67AD-414C-B39E-8FCD050FEA6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{817BD71F-67AD-414C-B39E-8FCD050FEA6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{982F2896-A9A8-425D-BD84-F6D6E193C7A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{982F2896-A9A8-425D-BD84-F6D6E193C7A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{982F2896-A9A8-425D-BD84-F6D6E193C7A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{982F2896-A9A8-425D-BD84-F6D6E193C7A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{982F2896-A9A8-425D-BD84-F6D6E193C7A7} = {7FF07E99-1C36-4DC2-9155-1588165D4FE2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {33B0554B-11D0-40FA-8DB8-6C25289BA906}
