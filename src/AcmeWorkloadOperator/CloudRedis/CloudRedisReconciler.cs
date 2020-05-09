@@ -58,6 +58,7 @@ namespace AcmeWorkloadOperator.CloudRedis
                 return new ReconcileResult();
             }
 
+            // Culprit? Shouldn't try to create if already exists...
             var instance = await _cloudRedis.CreateOrUpdate(obj);
             _ = await PatchStatus(client, obj, instance);
 

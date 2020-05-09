@@ -39,7 +39,7 @@ namespace AcmeWorkloadOperator.CloudRedis
         {
             var instanceName = new InstanceName(ProjectId, LocationId, obj.Spec.Name);
             Instance existing = null;
-            try { await _client.GetInstanceAsync(instanceName); }
+            try { existing = await _client.GetInstanceAsync(instanceName); }
             catch (RpcException e) when (e.StatusCode == StatusCode.NotFound) { }
 
             if(existing == null)
