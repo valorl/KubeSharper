@@ -18,7 +18,6 @@ namespace AcmeWorkloadOperator.Acme
             Labels = new Dictionary<string, string>();
             Environment = new Dictionary<string, string>();
         }
-        public string Name { get; set; }
         public string Team { get; set; }
         public int Replicas { get; set; }
         public string ImageName { get; set; }

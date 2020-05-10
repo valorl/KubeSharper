@@ -36,9 +36,11 @@ namespace AcmeWorkloadOperator
 
                     services.AddTransient(_ =>
                     {
+#if DEBUG
                         Environment.SetEnvironmentVariable(
                             "GOOGLE_APPLICATION_CREDENTIALS",
                             @"C:\Users\vao\kubesharper-18da497d6cb7.json");
+#endif
 
                         return CloudRedisClient.Create();
                     });
@@ -51,23 +53,18 @@ namespace AcmeWorkloadOperator
                     services.AddSingleton<CloudRedisReconciler>();
 
                     services.KubeSharperManager(@"C:\Users\vao\kubeconfig.yaml")
-                        //.WithController((sp, cfg) =>
-                        //{
-                        //    var ns = "default";
-                        //    cfg.Watch<V1Deployment>(ns, Handlers.EnqueueForOwner(isController: true));
-                        //    cfg.Watch<V1Service>(ns, Handlers.EnqueueForOwner(isController: true));
-                        //    cfg.Watch<Networkingv1beta1Ingress>(ns, Handlers.EnqueueForOwner(isController: true));
+                        .WithController((sp, cfg) =>
+                        {
+                            var ns = "default";
+                            cfg.Watch<V1Deployment>(ns, Handlers.EnqueueForOwner(isController: true));
+                            cfg.Watch<V1Service>(ns, Handlers.EnqueueForOwner(isController: true));
+                            cfg.Watch<Networkingv1beta1Ingress>(ns, Handlers.EnqueueForOwner(isController: true));
+                            cfg.Watch<AcmeService>(ns, Handlers.EnqueueForObject());
 
-                        //    //cfg.Watch<V1Secret>(ns, Handlers.EnqueueForOwner(isController: true));
-                        //    //cfg.Watch<V1ConfigMap>(ns, Handlers.EnqueueForOwner(isController: true));
-                        //    //cfg.Watch<V1beta1CronJob>(ns, Handlers.EnqueueForOwner(isController: true));
+                            cfg.Options.Reconciler = sp.GetRequiredService<AcmeReconciler>();
+                            //cfg.Options.ResyncPeriod = TimeSpan.FromSeconds(10);
 
-                        //    cfg.Watch<AcmeService>(ns, Handlers.EnqueueForObject());
-
-                        //    cfg.Options.Reconciler = sp.GetRequiredService<AcmeReconciler>();
-                        //    //cfg.Options.ResyncPeriod = TimeSpan.FromSeconds(10);
-
-                        //})
+                        })
                         .WithController((sp, cfg) =>
                         {
                             var ns = "default";
